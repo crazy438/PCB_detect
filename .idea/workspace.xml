@@ -1,25 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d4845691-ede6-4a40-b41b-b5fab4989fca" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/PCB_detect.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/GUI/PCB_detect_page.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/GUI/main_window.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/GUI/model_setting_widget.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/GUI/predict_setting_widget.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/GUI/resource/predict_setting_widget.qss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/GUI/resource/result_display_widget.qss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/GUI/resource/shoko.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/GUI/result_display_widget.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data_augmentation.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/predict.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
+    <list default="true" id="d4845691-ede6-4a40-b41b-b5fab4989fca" name="更改" comment="完成模型设置和推理设置两部分">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,6 +19,12 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/crazy438/PCB_detect.git",
+    "accountId": "d2d796bf-f5e8-43c9-9ca9-82f17aa80c05"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -109,12 +98,25 @@
       <workItem from="1775036576023" duration="6825000" />
       <workItem from="1775111328315" duration="15780000" />
       <workItem from="1775138185392" duration="154000" />
-      <workItem from="1775188616658" duration="16311000" />
+      <workItem from="1775188616658" duration="16633000" />
     </task>
+    <task id="LOCAL-00001" summary="完成模型设置和推理设置两部分">
+      <option name="closed" value="true" />
+      <created>1775220719500</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1775220719500</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="完成模型设置和推理设置两部分" />
+    <option name="LAST_COMMIT_MESSAGE" value="完成模型设置和推理设置两部分" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -136,7 +138,7 @@
     <SUITE FILE_PATH="coverage/PCB_detect$PCB_detect_page.coverage" NAME="PCB_detect_page 覆盖结果" MODIFIED="1775132026666" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GUI" />
     <SUITE FILE_PATH="coverage/PCB_detect$split.coverage" NAME="split 覆盖结果" MODIFIED="1774939298960" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/PCB_DATASET_2/images" />
     <SUITE FILE_PATH="coverage/PCB_detect$data_augmentation.coverage" NAME="data_augmentation 覆盖结果" MODIFIED="1774937265991" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PCB_detect$main.coverage" NAME="main 覆盖结果" MODIFIED="1775220605669" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/PCB_detect$main.coverage" NAME="main 覆盖结果" MODIFIED="1775220641019" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PCB_detect$creat_dataset.coverage" NAME="creat_dataset 覆盖结果" MODIFIED="1774623077277" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PCB_detect$dataset_split.coverage" NAME="dataset_split 覆盖结果" MODIFIED="1774940753230" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PCB_detect$predict_setting_widget.coverage" NAME="predict_setting_widget 覆盖结果" MODIFIED="1775206051673" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/GUI" />
