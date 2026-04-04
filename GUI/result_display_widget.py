@@ -1,9 +1,11 @@
 import pathlib
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QFormLayout, QWidget, QFileDialog, QButtonGroup, QListWidgetItem, \
-    QListWidget, QVBoxLayout
-from qfluentwidgets import PushButton, LineEdit, HeaderCardWidget, FluentIcon, RadioButton, ListWidget
+    QListWidget, QVBoxLayout, QHeaderView, QTableWidgetItem, QAbstractItemView
+from qfluentwidgets import PushButton, LineEdit, HeaderCardWidget, FluentIcon, RadioButton, ListWidget, TableWidget
+
 
 class ResultDisplayWidget(HeaderCardWidget):
     def __init__(self, parent=None):
@@ -21,10 +23,13 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.img_display_region.setAlignment(Qt.AlignCenter)
         self.img_display_region.setStyleSheet("border: 1px solid black;")
         self.img_display_region.setScaledContents(True)
-        self.result_display_layout.addWidget(self.img_display_region)
+        self.result_display_layout.addWidget(self.img_display_region, 3)
 
         # 初始化"开始检测"、"生成报告"、"保存图像"按钮
         self.init_buttons()
+
+        # 检测结果的表格
+        self.init_result_table()
 
         # 要把组件和布局添加到HeaderCardWidget的viewLayout才会显示
         self.viewLayout.addLayout(self.result_display_layout)
@@ -45,4 +50,37 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.button_layout.addWidget(self.report_button)
         self.button_layout.addWidget(self.save_button)
 
-        self.result_display_layout.addLayout(self.button_layout)
+        self.result_display_layout.addLayout(self.button_layout, 1)
+
+    def init_result_table(self):
+        self.result_table = TableWidget(self)
+        self.result_table.setBorderVisible(True)
+        self.result_table.setBorderRadius(8)
+        self.result_table.setWordWrap(False)
+        self.result_table.setSelectionBehavior(QAbstractItemView.SelectRows) # 单击选中整行
+        self.result_table.setSelectionMode(QAbstractItemView.SingleSelection) # 一次只能选中一行，不允许选中多行
+        self.result_table.setEditTriggers(QAbstractItemView.NoEditTriggers) # 禁止编辑
+        self.result_table.horizontalHeader().setStyleSheet("""
+            QHeaderView::section {
+                font-size: 20px;
+                font-family: 'Microsoft YaHei';
+                color: black;
+            }
+        """)
+        self.result_table.verticalHeader().hide()
+        self.result_table.setRowCount(5)
+        self.result_table.setColumnCount(6)
+        self.result_table.setHorizontalHeaderLabels(["缺陷类型", "置信度", "Xmin", "Xmax", "Ymin", "Ymax"])
+        self.result_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        self.result_display_layout.addWidget(self.result_table, 2)
+
+        item = QTableWidgetItem("测试")
+        item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+        item.setFont(QFont("Microsoft YaHei", 14))
+        self.result_table.setItem(0, 0, item)
+
+    def img_display(self, img_path):
+        # 图片缩放到label大小时，可能会调整自身大小以留出一点空白。所以不能缩放到与label大小完全相同，而要留一些余量
+        img = QPixmap(img_path).scaled(self.img_display_region.size() - QSize(20, 20), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.img_display_region.setPixmap(img)

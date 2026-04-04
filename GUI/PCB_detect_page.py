@@ -22,6 +22,8 @@ class PCBDetectPage(QWidget):
         self.predict_setting_widget = PredictSettingWidget(self)
         self.result_display_widget = ResultDisplayWidget(self)
 
+        self.predict_setting_widget.img_path_signal.connect(self.result_display_widget.img_display)
+
         ####################layout设置#####################
         self.h_box_layout.addLayout(self.v_box_layout_1, 2)
         self.h_box_layout.addLayout(self.v_box_layout_2, 3)

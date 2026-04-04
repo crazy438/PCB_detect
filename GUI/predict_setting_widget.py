@@ -1,18 +1,23 @@
 import pathlib
 import functools
 
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import  QHBoxLayout, QFileDialog, QButtonGroup, QListWidgetItem, QVBoxLayout
 from qfluentwidgets import PushButton, HeaderCardWidget, FluentIcon, RadioButton, ListWidget
 
 
 class PredictSettingWidget(HeaderCardWidget):
+    # 将file_ListWidget选中的图片路径传递给result_display_widget.py里的img_display_region的信号量
+    img_path_signal = pyqtSignal(str)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setTitle("推理设置")
         self.headerLabel.setObjectName("predict_setting_header")
         self.setBorderRadius(8)
 
+        # 推理设置布局
         self.predict_setting_layout = QVBoxLayout()
 
         # 初始化推理模式的三个互斥按钮
@@ -26,6 +31,10 @@ class PredictSettingWidget(HeaderCardWidget):
 
         # 加载文件后的文件列表
         self.file_ListWidget = ListWidget(self)
+        self.file_ListWidget.setAlternatingRowColors(True)
+        self.file_ListWidget.setStyleSheet(self.file_ListWidget.styleSheet() + "ListWidget { border: 1px solid #A9A9A9; border-radius: 8px; }")
+        self.file_ListWidget.itemSelectionChanged.connect(self.emit_img_path)
+
         self.predict_setting_layout.addWidget(self.file_ListWidget)
 
         # 要把组件和布局添加到HeaderCardWidget的viewLayout才会显示
@@ -37,8 +46,10 @@ class PredictSettingWidget(HeaderCardWidget):
             self.setStyleSheet(f.read())
 
     def init_predict_mode_button(self):
+
+        # QFluent内部用了setStyleSheet，导致QSS被阻断，只能外部附加样式写入
         self.img_video_mode_button = RadioButton("图片/视频模式", self)
-        self.img_video_mode_button.setStyleSheet("font-size: 20px; font-family: 'Microsoft YaHei';") # 不知为何QSS捕获不到，只能内置应用样式
+        self.img_video_mode_button.setStyleSheet("font-size: 20px; font-family: 'Microsoft YaHei';")
 
         self.camera_mode_button = RadioButton("摄像头模式", self)
         self.camera_mode_button.setStyleSheet("font-size: 20px; font-family: 'Microsoft YaHei';")
@@ -68,3 +79,12 @@ class PredictSettingWidget(HeaderCardWidget):
                 item.setFont(qfont)
                 self.file_ListWidget.addItem(item)
             self.file_ListWidget.setCurrentRow(0)
+
+    def emit_img_path(self):
+        selected_img_path = self.file_ListWidget.currentItem().text()
+
+        # 若获取不到图片路径，直接返回
+        if not selected_img_path: return
+
+        # 将图片路径传递给result_display_widget.py里的img_display_region处理
+        self.img_path_signal.emit(selected_img_path)

@@ -1,15 +1,15 @@
 #result_display_header {
     font: 24px;
-    font-family: 'Microsoft YaHei';
+    font-family: "Microsoft YaHei";
     color: #0EA5E9;
 }
 
 #result_display_region {
     font: 50px;
-    font-family: 'Microsoft YaHei';
+    font-family: "Microsoft YaHei";
 }
 
 ResultDisplayWidget PushButton {
     font: 20px;
-    font-family: 'Microsoft YaHei';
+    font-family: "Microsoft YaHei";
 }

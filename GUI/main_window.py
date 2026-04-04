@@ -160,7 +160,7 @@ class Window(FramelessWindow):
 
     def initWindow(self):
         self.resize(1300, 800)
-        self.setWindowIcon(QIcon(':/qfluentwidgets/images/logo.png'))
+        self.setWindowIcon(QIcon(str((pathlib.Path(__file__).parent / "resource/广大校徽.png"))))
         self.setWindowTitle("基于YOLO的PCB缺陷检测识别")
         self.titleBar.setAttribute(Qt.WA_StyledBackground)
 
@@ -183,7 +183,7 @@ class Window(FramelessWindow):
         )
 
     def setQss(self):
-        qss_path = pathlib.Path(__file__).parent / "resource/demo.qss"
+        qss_path = pathlib.Path(__file__).parent / "resource/main_window.qss"
         with open( qss_path, encoding='utf-8') as f:
             self.setStyleSheet(f.read())
 

@@ -9,6 +9,12 @@ PredictSettingWidget QLabel {
     font-family: 'Microsoft YaHei';
 }
 
+PredictSettingWidget *[class="RadioButton"] {
+    font: 20px;
+    font-family: 'Microsoft YaHei';
+}
+
+
 #open_file_button {
     font-size: 20px;
     font-family: 'Microsoft YaHei';
