@@ -1,10 +1,14 @@
+from ultralytics import YOLO # YOLO含Pytorch,Pytorch高版本神秘导包顺序bug，要让YOLO在QT前导入
+
 import pathlib
 
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QFormLayout, QWidget, QFileDialog, QButtonGroup, QListWidgetItem, \
     QListWidget, QVBoxLayout, QHeaderView, QTableWidgetItem, QAbstractItemView
-from qfluentwidgets import PushButton, LineEdit, HeaderCardWidget, FluentIcon, RadioButton, ListWidget, TableWidget
+from qfluentwidgets import PushButton, LineEdit, HeaderCardWidget, FluentIcon, RadioButton, ListWidget, TableWidget, MessageBox
+
+from . import shared_data
 
 
 class ResultDisplayWidget(HeaderCardWidget):
@@ -43,6 +47,8 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.button_layout = QHBoxLayout()
 
         self.run_button = PushButton("🚀 开始检测")
+        self.run_button.clicked.connect(self.model_predict)
+
         self.report_button = PushButton(FluentIcon.DOCUMENT, "生成报告")
         self.save_button = PushButton(FluentIcon.SAVE, "保存图像")
 
@@ -82,5 +88,47 @@ class ResultDisplayWidget(HeaderCardWidget):
 
     def img_display(self, img_path):
         # 图片缩放到label大小时，可能会调整自身大小以留出一点空白。所以不能缩放到与label大小完全相同，而要留一些余量
+        # 不然多次展示图片，label会逐渐被"撑大"
         img = QPixmap(img_path).scaled(self.img_display_region.size() - QSize(20, 20), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.img_display_region.setPixmap(img)
+
+    def model_predict(self):
+        # 输入校验
+        # conf, IoU, imgsz的输入校验已经在LineEdit()部分通过正则表达式完成
+
+        if not shared_data.model_path:
+            w = MyMessageBox("请加载模型", '左侧"模型设置"面板，点击"浏览"按钮加载模型', self.parent())
+            w.exec()
+            return
+
+        if not shared_data.file_path_list:
+            w = MyMessageBox("请加载图片", '左侧"推理设置"面板，点击"添加文件"按钮加载图片或视频', self.parent())
+            w.exec()
+            return
+
+        #  禁用"开始检测"按钮，防止处理期间再次触发
+        self.run_button.setEnabled(False)
+
+        # 加载模型
+        model =  YOLO(shared_data.model_path)
+        # self.result_list = [ model.predict(
+        #     file_path,
+        #     save=False,
+        #     conf=shared_data.conf,
+        #     iou=shared_data.IoU,
+        #     imgsz=shared_data.imgsz,
+        # ) for file_path in shared_data.file_path_list]
+
+
+# 隐藏掉cancel按钮的自定义样式QFluentWidget MessageBox
+class MyMessageBox(MessageBox):
+
+    def __init__(self, title: str, content: str, parent=None):
+        super().__init__(title, content, parent)
+        # 内部有样式应用，外部QSS无法响应，只能追加样式写法
+        self.titleLabel.setStyleSheet(self.titleLabel.styleSheet() + "#titleLabel {font-size: 25px;}")
+        self.contentLabel.setStyleSheet(self.contentLabel.styleSheet() + "#contentLabel {font-size: 18px;}")
+
+        self.yesButton.setFont(QFont("Microsoft YaHei", 16))
+        self.cancelButton.hide()
+        self.setContentCopyable(True)

@@ -6,6 +6,7 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import  QHBoxLayout, QFileDialog, QButtonGroup, QListWidgetItem, QVBoxLayout
 from qfluentwidgets import PushButton, HeaderCardWidget, FluentIcon, RadioButton, ListWidget
 
+from . import shared_data
 
 class PredictSettingWidget(HeaderCardWidget):
     # 将file_ListWidget选中的图片路径传递给result_display_widget.py里的img_display_region的信号量
@@ -23,11 +24,11 @@ class PredictSettingWidget(HeaderCardWidget):
         # 初始化推理模式的三个互斥按钮
         self.init_predict_mode_button()
 
-        # 初始化"打开文件"按钮
-        self.open_file_button = PushButton(FluentIcon.FOLDER, "打开文件")
-        self.open_file_button.setObjectName("open_file_button")
-        self.open_file_button.clicked.connect(functools.partial(self.get_file, QFont("Microsoft YaHei", 14)))
-        self.predict_setting_layout.addWidget(self.open_file_button)
+        # 初始化"添加文件"按钮
+        self.add_file_button = PushButton(FluentIcon.FOLDER, "添加文件")
+        self.add_file_button.setObjectName("open_file_button")
+        self.add_file_button.clicked.connect(functools.partial(self.get_file, QFont("Microsoft YaHei", 14)))
+        self.predict_setting_layout.addWidget(self.add_file_button)
 
         # 加载文件后的文件列表
         self.file_ListWidget = ListWidget(self)
@@ -71,14 +72,15 @@ class PredictSettingWidget(HeaderCardWidget):
         self.predict_setting_layout.addLayout(self.predict_mode_layout)
 
     def get_file(self, qfont):
-        file_path, _= QFileDialog.getOpenFileNames(self, "打开文件", filter="图片视频文件(*.jpg *.png *.bmp *.mp4)")
-        if file_path:
+        file_path_list, _= QFileDialog.getOpenFileNames(self, "打开文件", filter="图片视频文件(*.jpg *.png *.bmp *.mp4 *.avi *.mkv)")
+        if file_path_list:
             self.file_ListWidget.clear()
-            for file in file_path:
+            for file in file_path_list:
                 item = QListWidgetItem(file)
                 item.setFont(qfont)
                 self.file_ListWidget.addItem(item)
             self.file_ListWidget.setCurrentRow(0)
+            shared_data.file_path_list = file_path_list
 
     def emit_img_path(self):
         selected_img_path = self.file_ListWidget.currentItem().text()
