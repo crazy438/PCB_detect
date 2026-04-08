@@ -1,7 +1,7 @@
 import pathlib
 
 from PyQt5.QtCore import QRegExp
-from PyQt5.QtGui import QDoubleValidator, QValidator, QRegExpValidator, QIntValidator
+from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QFormLayout, QFileDialog
 from qfluentwidgets import PushButton, LineEdit, HeaderCardWidget, FluentIcon
 
@@ -21,7 +21,6 @@ class ModelSettingWidget(HeaderCardWidget):
         self.model_path_LineEdit.setReadOnly(True)
 
         self.open_file_button = PushButton(FluentIcon.FOLDER, "浏览")
-        self.open_file_button.setObjectName("open_file_button")
         self.open_file_button.clicked.connect(self.get_model_file)
         self.model_path_hbox = QHBoxLayout()
         self.model_path_hbox.addWidget(self.model_path_LineEdit)
@@ -30,9 +29,8 @@ class ModelSettingWidget(HeaderCardWidget):
         self.model_conf_text = QLabel("置信度阈值")
         self.model_conf_LineEdit = LineEdit()
         self.model_conf_LineEdit.setText("0.25")
-        self.model_conf_LineEdit.setValidator(QRegExpValidator(QRegExp(r"^0(\.\d{0,4})?$|^1(\.0{0,4})?$")))        # 正则表达式作输入验证
         # ^0表示以0开头，\.为字符小数点，\d为0~9的数字，{0，4}表示重复\d 0~4次，|表示或
-
+        self.model_conf_LineEdit.setValidator(QRegExpValidator(QRegExp(r"^0(\.\d{0,4})?$|^1(\.0{0,4})?$")))        # 正则表达式作输入验证
 
         self.model_IoU_text = QLabel("IoU阈值")
         self.model_IoU_LineEdit = LineEdit()

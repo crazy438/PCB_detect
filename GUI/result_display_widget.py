@@ -2,11 +2,12 @@ from ultralytics import YOLO # YOLO含Pytorch,Pytorch高版本神秘导包顺序
 
 import pathlib
 
-from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QFont, QPixmap
+from PyQt5.QtCore import Qt, QSize, QTimer
+from PyQt5.QtGui import QFont, QPixmap, QPainter, QColor
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QFormLayout, QWidget, QFileDialog, QButtonGroup, QListWidgetItem, \
     QListWidget, QVBoxLayout, QHeaderView, QTableWidgetItem, QAbstractItemView
-from qfluentwidgets import PushButton, LineEdit, HeaderCardWidget, FluentIcon, RadioButton, ListWidget, TableWidget, MessageBox
+from qfluentwidgets import PushButton, LineEdit, HeaderCardWidget, FluentIcon, RadioButton, ListWidget, TableWidget, \
+    MessageBox, HorizontalFlipView, StateToolTip, FluentStyleSheet, setCustomStyleSheet
 
 from . import shared_data
 
@@ -21,19 +22,11 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.result_display_layout = QVBoxLayout()
 
         ##########图像展示区域###########
-        self.img_display_region = QLabel()
-        self.img_display_region.setObjectName("result_display_region")
-        self.img_display_region.setText("图像展示区域")
-        self.img_display_region.setAlignment(Qt.AlignCenter)
-        self.img_display_region.setStyleSheet("border: 1px solid black;")
-        self.img_display_region.setScaledContents(True)
-        self.result_display_layout.addWidget(self.img_display_region, 3)
+        self.img_display_view = ImgDisplayView("图像预览区域", self)
+        self.result_display_layout.addWidget(self.img_display_view, 3)
 
-        # 初始化"开始检测"、"生成报告"、"保存图像"按钮
-        self.init_buttons()
-
-        # 检测结果的表格
-        self.init_result_table()
+        self.init_buttons() # 初始化"开始检测"、"生成报告"、"保存图像"按钮
+        self.init_result_table() # 检测结果的表格
 
         # 要把组件和布局添加到HeaderCardWidget的viewLayout才会显示
         self.viewLayout.addLayout(self.result_display_layout)
@@ -87,27 +80,32 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.result_table.setItem(0, 0, item)
 
     def img_display(self, img_path):
-        # 图片缩放到label大小时，可能会调整自身大小以留出一点空白。所以不能缩放到与label大小完全相同，而要留一些余量
-        # 不然多次展示图片，label会逐渐被"撑大"
-        img = QPixmap(img_path).scaled(self.img_display_region.size() - QSize(20, 20), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        self.img_display_region.setPixmap(img)
+        self.img_display_view.clear()
+        self.img_display_view.addImage(img_path)
 
     def model_predict(self):
         # 输入校验
         # conf, IoU, imgsz的输入校验已经在LineEdit()部分通过正则表达式完成
 
         if not shared_data.model_path:
-            w = MyMessageBox("请加载模型", '左侧"模型设置"面板，点击"浏览"按钮加载模型', self.parent())
+            w = MyMessageBox("请加载模型", '左侧"模型设置"面板，点击"浏览"按钮加载模型', self.window())
             w.exec()
             return
 
         if not shared_data.file_path_list:
-            w = MyMessageBox("请加载图片", '左侧"推理设置"面板，点击"添加文件"按钮加载图片或视频', self.parent())
+            w = MyMessageBox("请加载图片", '左侧"推理设置"面板，点击"添加文件"按钮加载图片或视频', self.window())
             w.exec()
             return
 
         #  禁用"开始检测"按钮，防止处理期间再次触发
         self.run_button.setEnabled(False)
+
+        # 弹出"正在处理"消息框
+        self.process_message = ProcessMessage('正在处理中', '请耐心等待哦~~', self.parent())
+        self.process_message.show()
+
+        # self.process_message.setState(True)
+        # self.process_message.deleteLater()
 
         # 加载模型
         model =  YOLO(shared_data.model_path)
@@ -132,3 +130,44 @@ class MyMessageBox(MessageBox):
         self.yesButton.setFont(QFont("Microsoft YaHei", 16))
         self.cancelButton.hide()
         self.setContentCopyable(True)
+
+class ImgDisplayView(HorizontalFlipView):
+    def __init__(self, tip_text=None, parent=None):
+        super().__init__(parent)
+        self.setAspectRatioMode(Qt.AspectRatioMode.IgnoreAspectRatio)
+        self.setStyleSheet("border: 1px solid black;")
+        self.tip_text = tip_text
+
+    # 重写paintEvent事件，实现功能:列表为空时，显示"图像预览区域"这几个字，加载图像后不显示
+    def paintEvent(self, event):
+        # 先调用父类的 paintEvent，保证正常绘制列表项和边框
+        super().paintEvent(event)
+
+        if self.count() == 0 and self.tip_text:
+            # 在视口上绘制，避开列表区域
+            painter = QPainter(self.viewport())
+
+            # 设置文本样式
+            painter.setPen(QColor(150, 150, 150))
+            painter.setFont(QFont("Microsoft YaHei", 25))
+
+            # 获取视口矩形，在中间绘制文本
+            viewport_rect = self.viewport().rect()
+            painter.drawText(viewport_rect, Qt.AlignCenter, self.tip_text)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.setItemSize(self.size()) # 神人作者没写resizeEvent的ItemSize更新
+
+
+# QFluentWidget的StateToolTip消息弹窗没有自动跟随特性，因此手写一个
+class ProcessMessage(StateToolTip):
+    def __init__(self, title, content, parent=None):
+        super().__init__(title, content, parent)
+        self.closeButton.hide()
+        self.update_position()
+        self.window().window_resize_signal.connect(self.update_position)
+        self.destroyed.connect(lambda: self.window().window_resize_signal.disconnect(self.update_position))
+
+    def update_position(self):
+        self.move(self.parent().width() - self.width() - 10, 0)

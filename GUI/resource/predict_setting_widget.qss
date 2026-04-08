@@ -1,21 +1,10 @@
 #predict_setting_header {
-    font: 24px;
+    font-size: 24px;
     font-family: 'Microsoft YaHei';
     color: #0EA5E9;
 }
 
-PredictSettingWidget QLabel {
-    font: 20px;
-    font-family: 'Microsoft YaHei';
-}
-
-PredictSettingWidget *[class="RadioButton"] {
-    font: 20px;
-    font-family: 'Microsoft YaHei';
-}
-
-
-#open_file_button {
+PredictSettingWidget QLabel, #open_file_button{
     font-size: 20px;
     font-family: 'Microsoft YaHei';
 }

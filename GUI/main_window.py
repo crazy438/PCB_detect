@@ -105,6 +105,8 @@ class CustomTitleBar(TitleBar):
 
 class Window(FramelessWindow):
 
+    window_resize_signal = pyqtSignal(int, int)
+
     def __init__(self):
         super().__init__()
         self.setTitleBar(CustomTitleBar(self))
@@ -161,7 +163,7 @@ class Window(FramelessWindow):
     def initWindow(self):
         self.resize(1300, 800)
         self.setWindowIcon(QIcon(str((pathlib.Path(__file__).parent / "resource/广大校徽.png"))))
-        self.setWindowTitle("基于YOLO的PCB缺陷检测识别")
+        self.setWindowTitle("基于PyQt5的缺陷检测平台")
         self.titleBar.setAttribute(Qt.WA_StyledBackground)
 
         desktop = QApplication.desktop().availableGeometry()
@@ -205,6 +207,11 @@ class Window(FramelessWindow):
 
         if w.exec():
             QDesktopServices.openUrl(QUrl("https://afdian.net/a/zhiyiYo"))
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.window_resize_signal.emit(self.width(), self.height())
+
 
 
 if __name__ == '__main__':

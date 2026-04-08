@@ -4,17 +4,7 @@
     color: #0EA5E9;
 }
 
-ModelSettingWidget QLabel {
+QLabel, QLineEdit, PushButton {
     font: 20px;
-    font-family: "Microsoft YaHei";
-}
-
-ModelSettingWidget QLineEdit {
-    font-size: 20px;
-    font-family: "Microsoft YaHei";
-}
-
-#open_file_button{
-    font-size: 20px;
     font-family: "Microsoft YaHei";
 }

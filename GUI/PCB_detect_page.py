@@ -1,7 +1,4 @@
-import pathlib
-from PyQt5.QtCore import Qt, QStandardPaths
-from PyQt5.Qt import QPixmap, QPainter, QPoint, QPen, QColor, QSize, QBrush
-from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QFormLayout, QWidget, QFileDialog
+from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
 from .model_setting_widget import ModelSettingWidget
 from .predict_setting_widget import PredictSettingWidget
@@ -15,8 +12,8 @@ class PCBDetectPage(QWidget):
         self.setObjectName(text.replace(' ', '-'))
 
         self.h_box_layout = QHBoxLayout(self)
-        self.v_box_layout_1 = QVBoxLayout()
-        self.v_box_layout_2 = QVBoxLayout()
+        self.v_box_layout_1 = QVBoxLayout(self)
+        self.v_box_layout_2 = QVBoxLayout(self)
 
         self.model_setting_widget = ModelSettingWidget(self)
         self.predict_setting_widget = PredictSettingWidget(self)

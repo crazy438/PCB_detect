@@ -2,9 +2,10 @@ import pathlib
 import functools
 
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QFont
-from PyQt5.QtWidgets import  QHBoxLayout, QFileDialog, QButtonGroup, QListWidgetItem, QVBoxLayout
+from PyQt5.QtGui import QFont, QPainter, QColor
+from PyQt5.QtWidgets import QHBoxLayout, QFileDialog, QButtonGroup, QListWidgetItem, QVBoxLayout
 from qfluentwidgets import PushButton, HeaderCardWidget, FluentIcon, RadioButton, ListWidget
+from PyQt5.QtCore import Qt
 
 from . import shared_data
 
@@ -30,12 +31,9 @@ class PredictSettingWidget(HeaderCardWidget):
         self.add_file_button.clicked.connect(functools.partial(self.get_file, QFont("Microsoft YaHei", 14)))
         self.predict_setting_layout.addWidget(self.add_file_button)
 
-        # 加载文件后的文件列表
-        self.file_ListWidget = ListWidget(self)
-        self.file_ListWidget.setAlternatingRowColors(True)
-        self.file_ListWidget.setStyleSheet(self.file_ListWidget.styleSheet() + "ListWidget { border: 1px solid #A9A9A9; border-radius: 8px; }")
+        # 加载文件的文件列表
+        self.file_ListWidget = FileListWidget("文件选择区域")
         self.file_ListWidget.itemSelectionChanged.connect(self.emit_img_path)
-
         self.predict_setting_layout.addWidget(self.file_ListWidget)
 
         # 要把组件和布局添加到HeaderCardWidget的viewLayout才会显示
@@ -90,3 +88,28 @@ class PredictSettingWidget(HeaderCardWidget):
 
         # 将图片路径传递给result_display_widget.py里的img_display_region处理
         self.img_path_signal.emit(selected_img_path)
+
+# 在QFluentWidget的ListWidget基础上，设定样式与实现空列表显示提示文字的功能
+class FileListWidget(ListWidget):
+    def __init__(self, tip_text=None, parent=None):
+        super().__init__(parent)
+        self.setAlternatingRowColors(True)
+        self.setStyleSheet(self.styleSheet() + "ListWidget { border: 1px solid #A9A9A9; border-radius: 8px; }")
+        self.tip_text = tip_text
+
+    # 重写paintEvent事件，实现功能:列表为空时，显示"文件加载区域"这几个字，加载文件后不显示
+    def paintEvent(self, event):
+        # 先调用父类的 paintEvent，保证正常绘制列表项和边框
+        super().paintEvent(event)
+
+        if self.count() == 0 and self.tip_text:
+            # 在视口上绘制，避开列表区域
+            painter = QPainter(self.viewport())
+
+            # 设置文本样式
+            painter.setPen(QColor(150, 150, 150))
+            painter.setFont(QFont("Microsoft YaHei", 25))
+
+            # 获取视口矩形，在中间绘制文本
+            viewport_rect = self.viewport().rect()
+            painter.drawText(viewport_rect, Qt.AlignCenter, self.tip_text)
