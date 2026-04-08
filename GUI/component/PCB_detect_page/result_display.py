@@ -1,15 +1,14 @@
-from ultralytics import YOLO # YOLO含Pytorch,Pytorch高版本神秘导包顺序bug，要让YOLO在QT前导入
-
 import pathlib
 
-from PyQt5.QtCore import Qt, QSize, QTimer
-from PyQt5.QtGui import QFont, QPixmap, QPainter, QColor
-from PyQt5.QtWidgets import QLabel, QHBoxLayout, QFormLayout, QWidget, QFileDialog, QButtonGroup, QListWidgetItem, \
-    QListWidget, QVBoxLayout, QHeaderView, QTableWidgetItem, QAbstractItemView
-from qfluentwidgets import PushButton, LineEdit, HeaderCardWidget, FluentIcon, RadioButton, ListWidget, TableWidget, \
-    MessageBox, HorizontalFlipView, StateToolTip, FluentStyleSheet, setCustomStyleSheet
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QHeaderView, QTableWidgetItem, QAbstractItemView
+from qfluentwidgets import PushButton, HeaderCardWidget, FluentIcon, TableWidget, \
+    MessageBox
 
-from . import shared_data
+from GUI.component.PCB_detect_page.custom_widget.img_display_view import ImgDisplayView
+from GUI.component import shared_data
+from GUI.component.PCB_detect_page.custom_widget.process_message import ProcessMessage
 
 
 class ResultDisplayWidget(HeaderCardWidget):
@@ -104,19 +103,9 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.process_message = ProcessMessage('正在处理中', '请耐心等待哦~~', self.parent())
         self.process_message.show()
 
-        # self.process_message.setState(True)
-        # self.process_message.deleteLater()
-
-        # 加载模型
-        model =  YOLO(shared_data.model_path)
-        # self.result_list = [ model.predict(
-        #     file_path,
-        #     save=False,
-        #     conf=shared_data.conf,
-        #     iou=shared_data.IoU,
-        #     imgsz=shared_data.imgsz,
-        # ) for file_path in shared_data.file_path_list]
-
+    def predict_finished_process(self):
+        self.process_message.finished() # 结束"正在处理"消息框
+        self.run_button.setEnabled(True) # 恢复按钮
 
 # 隐藏掉cancel按钮的自定义样式QFluentWidget MessageBox
 class MyMessageBox(MessageBox):
@@ -130,44 +119,3 @@ class MyMessageBox(MessageBox):
         self.yesButton.setFont(QFont("Microsoft YaHei", 16))
         self.cancelButton.hide()
         self.setContentCopyable(True)
-
-class ImgDisplayView(HorizontalFlipView):
-    def __init__(self, tip_text=None, parent=None):
-        super().__init__(parent)
-        self.setAspectRatioMode(Qt.AspectRatioMode.IgnoreAspectRatio)
-        self.setStyleSheet("border: 1px solid black;")
-        self.tip_text = tip_text
-
-    # 重写paintEvent事件，实现功能:列表为空时，显示"图像预览区域"这几个字，加载图像后不显示
-    def paintEvent(self, event):
-        # 先调用父类的 paintEvent，保证正常绘制列表项和边框
-        super().paintEvent(event)
-
-        if self.count() == 0 and self.tip_text:
-            # 在视口上绘制，避开列表区域
-            painter = QPainter(self.viewport())
-
-            # 设置文本样式
-            painter.setPen(QColor(150, 150, 150))
-            painter.setFont(QFont("Microsoft YaHei", 25))
-
-            # 获取视口矩形，在中间绘制文本
-            viewport_rect = self.viewport().rect()
-            painter.drawText(viewport_rect, Qt.AlignCenter, self.tip_text)
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.setItemSize(self.size()) # 神人作者没写resizeEvent的ItemSize更新
-
-
-# QFluentWidget的StateToolTip消息弹窗没有自动跟随特性，因此手写一个
-class ProcessMessage(StateToolTip):
-    def __init__(self, title, content, parent=None):
-        super().__init__(title, content, parent)
-        self.closeButton.hide()
-        self.update_position()
-        self.window().window_resize_signal.connect(self.update_position)
-        self.destroyed.connect(lambda: self.window().window_resize_signal.disconnect(self.update_position))
-
-    def update_position(self):
-        self.move(self.parent().width() - self.width() - 10, 0)

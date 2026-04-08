@@ -7,7 +7,8 @@ from PyQt5.QtWidgets import QHBoxLayout, QFileDialog, QButtonGroup, QListWidgetI
 from qfluentwidgets import PushButton, HeaderCardWidget, FluentIcon, RadioButton, ListWidget
 from PyQt5.QtCore import Qt
 
-from . import shared_data
+from GUI.component import shared_data
+
 
 class PredictSettingWidget(HeaderCardWidget):
     # 将file_ListWidget选中的图片路径传递给result_display_widget.py里的img_display_region的信号量

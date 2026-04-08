@@ -6,14 +6,12 @@ from PyQt5.QtCore import Qt, pyqtSignal, QEasingCurve, QUrl
 from PyQt5.QtGui import QIcon, QDesktopServices
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QApplication, QFrame, QWidget
 
-from qfluentwidgets import (NavigationBar, NavigationItemPosition, NavigationWidget, MessageBox,
-                            isDarkTheme, setTheme, Theme, setThemeColor,
-                            PopUpAniStackedWidget, getFont)
+from qfluentwidgets import NavigationBar, NavigationItemPosition, MessageBox, PopUpAniStackedWidget
 from qfluentwidgets import FluentIcon as FIF
 from qframelesswindow import FramelessWindow, TitleBar
 
 
-from .PCB_detect_page import PCBDetectPage
+from GUI.component.PCB_detect_page.PCB_detect_page import PCBDetectPage
 
 class Widget(QWidget):
     def __init__(self, text: str, parent=None):

@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 
-from .model_setting_widget import ModelSettingWidget
-from .predict_setting_widget import PredictSettingWidget
-from .result_display_widget import ResultDisplayWidget
+from .model_setting import ModelSettingWidget
+from .predict_setting import PredictSettingWidget
+from .result_display import ResultDisplayWidget
 
 
 class PCBDetectPage(QWidget):

@@ -5,7 +5,7 @@ from PyQt5.QtGui import QRegExpValidator
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QFormLayout, QFileDialog
 from qfluentwidgets import PushButton, LineEdit, HeaderCardWidget, FluentIcon
 
-from . import shared_data
+from GUI.component import shared_data
 
 class ModelSettingWidget(HeaderCardWidget):
     def __init__(self, parent=None):
