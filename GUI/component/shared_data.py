@@ -1,5 +1,10 @@
 model_path = None
-conf = None
-IoU = None
-imgsz = None
-file_path_list = None
+save_path = None
+conf = 0.25
+IoU = 0.7
+imgsz = 640
+verbose=False # YOLO model.predict的调试信息是否输出
+img_path_list = None
+video_path_list = None
+is_changed = False
+time = None

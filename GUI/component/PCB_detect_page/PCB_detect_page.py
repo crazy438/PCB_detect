@@ -4,7 +4,6 @@ from .model_setting import ModelSettingWidget
 from .predict_setting import PredictSettingWidget
 from .result_display import ResultDisplayWidget
 
-
 class PCBDetectPage(QWidget):
     def __init__(self, text, parent=None):
         super().__init__(parent=parent)
@@ -27,3 +26,16 @@ class PCBDetectPage(QWidget):
         self.v_box_layout_1.addWidget(self.model_setting_widget)
         self.v_box_layout_1.addWidget(self.predict_setting_widget)
         self.v_box_layout_2.addWidget(self.result_display_widget)
+
+
+        # result_display里面的模型推理任务处理，禁用其他组件防止数据竞争导致崩溃
+        self.result_display_widget.predict_task.started_signal.connect(self.disable_widget)
+        self.result_display_widget.predict_task.finished_signal.connect(self.enable_widget)
+
+    def disable_widget(self):
+        self.model_setting_widget.setDisabled(True)
+        self.predict_setting_widget.setDisabled(True)
+
+    def enable_widget(self):
+        self.model_setting_widget.setDisabled(False)
+        self.predict_setting_widget.setDisabled(False)

@@ -79,7 +79,18 @@ class PredictSettingWidget(HeaderCardWidget):
                 item.setFont(qfont)
                 self.file_ListWidget.addItem(item)
             self.file_ListWidget.setCurrentRow(0)
-            shared_data.file_path_list = file_path_list
+
+            # 从文件路径列表ile_path_list过滤出图片文件和视频文件
+            img_path_list = []
+            video_path_list = []
+            for file_path in file_path_list:
+                if pathlib.Path(file_path).suffix in [".jpg", ".png", ".bmp"]:
+                    img_path_list.append(file_path)
+                elif pathlib.Path(file_path).suffix in [".mp4", ".avi", ".mkv"]:
+                    video_path_list.append(file_path)
+            shared_data.img_path_list = img_path_list
+            shared_data.video_path_list = video_path_list
+            shared_data.is_changed = True
 
     def emit_img_path(self):
         selected_img_path = self.file_ListWidget.currentItem().text()
