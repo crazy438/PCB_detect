@@ -7,13 +7,10 @@ from PyQt5.QtWidgets import QHBoxLayout, QFileDialog, QButtonGroup, QListWidgetI
 from qfluentwidgets import PushButton, HeaderCardWidget, FluentIcon, RadioButton, ListWidget
 from PyQt5.QtCore import Qt
 
-from GUI.component import shared_data
+from shared_data import data
 
 
 class PredictSettingWidget(HeaderCardWidget):
-    # 将file_ListWidget选中的图片路径传递给result_display_widget.py里的img_display_region的信号量
-    img_path_signal = pyqtSignal(str)
-
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setTitle("推理设置")
@@ -34,7 +31,6 @@ class PredictSettingWidget(HeaderCardWidget):
 
         # 加载文件的文件列表
         self.file_ListWidget = FileListWidget("文件选择区域")
-        self.file_ListWidget.itemSelectionChanged.connect(self.emit_img_path)
         self.predict_setting_layout.addWidget(self.file_ListWidget)
 
         # 要把组件和布局添加到HeaderCardWidget的viewLayout才会显示
@@ -80,7 +76,7 @@ class PredictSettingWidget(HeaderCardWidget):
                 self.file_ListWidget.addItem(item)
             self.file_ListWidget.setCurrentRow(0)
 
-            # 从文件路径列表ile_path_list过滤出图片文件和视频文件
+            # 从文件路径列表file_path_list过滤出图片文件和视频文件
             img_path_list = []
             video_path_list = []
             for file_path in file_path_list:
@@ -88,26 +84,30 @@ class PredictSettingWidget(HeaderCardWidget):
                     img_path_list.append(file_path)
                 elif pathlib.Path(file_path).suffix in [".mp4", ".avi", ".mkv"]:
                     video_path_list.append(file_path)
-            shared_data.img_path_list = img_path_list
-            shared_data.video_path_list = video_path_list
-            shared_data.is_changed = True
+            data.img_path_list = img_path_list
+            data.video_path_list = video_path_list
 
-    def emit_img_path(self):
-        selected_img_path = self.file_ListWidget.currentItem().text()
-
-        # 若获取不到图片路径，直接返回
-        if not selected_img_path: return
-
-        # 将图片路径传递给result_display_widget.py里的img_display_region处理
-        self.img_path_signal.emit(selected_img_path)
-
-# 在QFluentWidget的ListWidget基础上，设定样式与实现空列表显示提示文字的功能
+# 在QFluentWidget的ListWidget基础上，实现设定样式,空列表显示提示文字,选中行切换信号的功能
 class FileListWidget(ListWidget):
+    # 将选中的图片路径传递给result_display_widget.py里的img_display_view
+    img_path_signal = pyqtSignal(str)
+
     def __init__(self, tip_text=None, parent=None):
         super().__init__(parent)
         self.setAlternatingRowColors(True)
         self.setStyleSheet(self.styleSheet() + "ListWidget { border: 1px solid #A9A9A9; border-radius: 8px; }")
         self.tip_text = tip_text
+        self.currentRowChanged.connect(self.emit_img_path)
+
+    def flush_current_row(self):
+        self.currentRowChanged.emit(self.currentRow())
+
+    def emit_img_path(self):
+        selected_img_path = self.currentItem()
+
+        # 将图片路径传递给result_display_widget.py里的img_display_view处理
+        if selected_img_path:
+            self.img_path_signal.emit(selected_img_path.text())
 
     # 重写paintEvent事件，实现功能:列表为空时，显示"文件加载区域"这几个字，加载文件后不显示
     def paintEvent(self, event):

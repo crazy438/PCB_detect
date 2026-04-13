@@ -1,10 +1,12 @@
 import pathlib
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import QLabel, QHBoxLayout, QFormLayout, QFileDialog, QLineEdit
+from PyQt5.QtWidgets import QLabel, QHBoxLayout, QFormLayout, QFileDialog
 from qfluentwidgets import PushButton, LineEdit, HeaderCardWidget, FluentIcon
 
-from GUI.component import shared_data
+from shared_data import data
+from .predict_task import predict_task
+
 
 class ModelSettingWidget(HeaderCardWidget):
     def __init__(self, parent=None):
@@ -57,27 +59,22 @@ class ModelSettingWidget(HeaderCardWidget):
         model_path, _= QFileDialog.getOpenFileName(self, "打开模型文件", filter="模型文件(*.pt)")
         if model_path:
             self.path_widget.line_edit.setText(model_path)
-            shared_data.model_path = model_path
-            shared_data.is_changed = True
+            data.model_path = model_path
 
     def get_save_path(self):
         save_path = QFileDialog.getExistingDirectory(self, "选择输出路径")
         if save_path:
             self.save_widget.line_edit.setText(save_path)
-            shared_data.save_path = save_path
-            shared_data.is_changed = True
+            data.save_path = save_path
 
     def update_conf(self):
-        shared_data.conf = eval(self.conf_LineEdit.text())
-        shared_data.is_changed = True
+        data.conf = eval(self.conf_LineEdit.text())
 
     def update_IoU(self):
-        shared_data.IoU = eval(self.IoU_LineEdit.text())
-        shared_data.is_changed = True
+        data.IoU = eval(self.IoU_LineEdit.text())
 
     def update_imgsz(self):
-        shared_data.imgsz = eval(self.imgsz_LineEdit.text())
-        shared_data.is_changed = True
+        data.imgsz = eval(self.imgsz_LineEdit.text())
 
 class CustomLineEdit(LineEdit):
     def __init__(self, label_text, parent=None):
@@ -85,7 +82,6 @@ class CustomLineEdit(LineEdit):
         self.text = QLabel(label_text)
         self.line_edit = LineEdit()
         self.line_edit.setReadOnly(True)
-
         self.button = PushButton(FluentIcon.FOLDER, "浏览")
 
         self.hbox = QHBoxLayout()
