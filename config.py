@@ -1,6 +1,6 @@
 import argparse
 
-parser = argparse.ArgumentParser(description="超参数管理")
+parser = argparse.ArgumentParser(description="参数管理")
 
 parser.add_argument('--model', type=str, help="YOLO模型选择")
 parser.add_argument('--seed', type=int, default=2026, help="随机数种子设置")

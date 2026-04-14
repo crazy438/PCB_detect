@@ -11,8 +11,9 @@ from qfluentwidgets import NavigationBar, NavigationItemPosition, MessageBox, Po
 from qfluentwidgets import FluentIcon as FIF
 from qframelesswindow import FramelessWindow, TitleBar
 
-
-from component.PCB_detect_page.PCB_detect_page import PCBDetectPage
+from database import init_database
+from component.detect_page.PCB_detect_page import DetectPage
+from component.history_page.history_page import HistoryPage
 
 class Widget(QWidget):
     def __init__(self, text: str, parent=None):
@@ -108,8 +109,8 @@ class Window(FramelessWindow):
         self.stackWidget = StackedWidget(self)
 
         # create sub interface
-        self.PCB_detect_page = PCBDetectPage("PCB检测页面", self)
-        self.appInterface = Widget('Application Interface', self)
+        self.detect_page = DetectPage("PCB检测页面", self)
+        self.history_page = HistoryPage("历史记录", self)
         self.videoInterface = Widget('Video Interface', self)
         self.libraryInterface = Widget('library Interface', self)
 
@@ -129,8 +130,8 @@ class Window(FramelessWindow):
         self.hBoxLayout.setStretchFactor(self.stackWidget, 1)
 
     def initNavigation(self):
-        self.addSubInterface(self.PCB_detect_page, FIF.HOME, "缺陷检测", selectedIcon=FIF.HOME_FILL)
-        self.addSubInterface(self.appInterface, FIF.HISTORY, "历史记录")
+        self.addSubInterface(self.detect_page, FIF.HOME, "缺陷检测", selectedIcon=FIF.HOME_FILL)
+        self.addSubInterface(self.history_page, FIF.HISTORY, "历史记录")
         self.addSubInterface(self.videoInterface, FIF.VIDEO, '视频')
 
         self.addSubInterface(self.libraryInterface, FIF.BOOK_SHELF, '库', NavigationItemPosition.BOTTOM, FIF.LIBRARY_FILL)
@@ -144,7 +145,7 @@ class Window(FramelessWindow):
         )
 
         self.stackWidget.currentChanged.connect(self.onCurrentInterfaceChanged)
-        self.navigationBar.setCurrentItem(self.PCB_detect_page.objectName())
+        self.navigationBar.setCurrentItem(self.detect_page.objectName())
 
     def initWindow(self):
         self.resize(1300, 800)

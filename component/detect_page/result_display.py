@@ -26,7 +26,7 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.init_buttons() # 初始化"开始检测"、"生成报告"按钮
 
         # 检测结果的表格
-        self.result_table = CustomTableWidget(5, 6, ["缺陷类型", "置信度", "Xmin", "Xmax", "Ymin", "Ymax"])
+        self.result_table = CustomTableWidget(5, ["缺陷类型", "置信度", "Xmin", "Xmax", "Ymin", "Ymax"])
         self.result_display_layout.addWidget(self.result_table, 2)
 
         # 模型推理线程初始化
@@ -97,3 +97,17 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.process_message = None
         self.run_button.setEnabled(True) # 恢复按钮
         self.report_button.setEnabled(True)
+
+    def add_results(self, current_row, img_path):
+        if data.result_table_items:
+            self.result_table.clearContents()
+            labels, confs, coordinates = data.result_table_items[current_row]
+            for i, label in enumerate(labels):
+                self.result_table.add_item(i, 0, label)
+            for i, conf in enumerate(confs):
+                self.result_table.add_item(i, 1, conf)
+            for i, (Xmin, Xmax, Ymin, Ymax) in enumerate(coordinates):
+                self.result_table.add_item(i, 2, Xmin)
+                self.result_table.add_item(i, 3, Xmax)
+                self.result_table.add_item(i, 4, Ymin)
+                self.result_table.add_item(i, 5, Ymax)
