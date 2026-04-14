@@ -1,11 +1,11 @@
 import pathlib
 import functools
 
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QStandardItem
 from PyQt5.QtWidgets import QHBoxLayout, QFileDialog, QButtonGroup, QListWidgetItem, QVBoxLayout
 from qfluentwidgets import PushButton, HeaderCardWidget, FluentIcon, RadioButton, ListWidget
 
-from custom_widget.file_list_widget import FileListWidget
+from custom_widget.file_list_widget import FileListView
 from shared_data import data
 
 
@@ -29,8 +29,8 @@ class PredictSettingWidget(HeaderCardWidget):
         self.predict_setting_layout.addWidget(self.add_file_button)
 
         # 加载文件的文件列表
-        self.file_ListWidget = FileListWidget("文件选择区域")
-        self.predict_setting_layout.addWidget(self.file_ListWidget)
+        self.file_view = FileListView("文件选择区域")
+        self.predict_setting_layout.addWidget(self.file_view)
 
         # 要把组件和布局添加到HeaderCardWidget的viewLayout才会显示
         self.viewLayout.addLayout(self.predict_setting_layout)
@@ -67,12 +67,15 @@ class PredictSettingWidget(HeaderCardWidget):
     def get_file(self, qfont):
         file_path_list, _= QFileDialog.getOpenFileNames(self, "打开文件", filter="图片视频文件(*.jpg *.png *.bmp *.mp4 *.avi *.mkv)")
         if file_path_list:
-            self.file_ListWidget.clear()
+            self.file_view.clear_data()
+
+            self.file_view.data_model.beginResetModel()
             for file in file_path_list:
-                item = QListWidgetItem(file)
+                item = QStandardItem(file)
                 item.setFont(qfont)
-                self.file_ListWidget.addItem(item)
-            self.file_ListWidget.setCurrentRow(0)
+                self.file_view.data_model.appendRow(item)
+            self.file_view.data_model.endResetModel()
+            self.file_view.setCurrentIndex(self.file_view.data_model.index(0,0))
 
             # 从文件路径列表file_path_list过滤出图片文件和视频文件
             img_path_list = []

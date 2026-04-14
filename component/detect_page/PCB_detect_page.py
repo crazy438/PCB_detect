@@ -29,12 +29,12 @@ class DetectPage(QWidget):
         self.signal_manage()
 
     def signal_manage(self):
-        self.predict_setting_widget.file_ListWidget.current_row_signal.connect(self.result_display_widget.img_display_view.add_image)
-        self.predict_setting_widget.file_ListWidget.current_row_signal.connect(self.result_display_widget.add_results)
+        self.predict_setting_widget.file_view.current_row_signal.connect(self.result_display_widget.img_display_view.add_image)
+        self.predict_setting_widget.file_view.current_row_signal.connect(self.result_display_widget.add_results)
 
         # result_display里面的模型推理任务处理，禁用其他组件防止数据竞争导致崩溃
         predict_task.started_signal.connect(self.disable_widget)
-        predict_task.finished_signal.connect(self.predict_setting_widget.file_ListWidget.flush_current_row)
+        predict_task.finished_signal.connect(self.predict_setting_widget.file_view.flush_current_row)
         predict_task.finished_signal.connect(self.enable_widget)
 
     def disable_widget(self):

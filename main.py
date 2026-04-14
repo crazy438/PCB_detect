@@ -11,7 +11,6 @@ from qfluentwidgets import NavigationBar, NavigationItemPosition, MessageBox, Po
 from qfluentwidgets import FluentIcon as FIF
 from qframelesswindow import FramelessWindow, TitleBar
 
-from database import init_database
 from component.detect_page.PCB_detect_page import DetectPage
 from component.history_page.history_page import HistoryPage
 
