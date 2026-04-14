@@ -19,10 +19,7 @@ class FileListView(ListView):
 
         self.data_model = QStandardItemModel()
         self.setModel(self.data_model)
-        self.clicked.connect(self.emit_current_item)
-
-    def flush_current_row(self):
-        self.clicked.emit(self.currentIndex())
+        self.selectionModel().currentRowChanged.connect(self.emit_current_item)
 
     def is_empty(self):
         return self.data_model and self.data_model.rowCount() == 0
@@ -31,12 +28,15 @@ class FileListView(ListView):
         if not self.is_empty():
             self.data_model.removeRows(0, self.data_model.rowCount())
 
-    def emit_current_item(self, index):
-        selected_img_path = index.data()
+    def emit_current_item(self, current, previous):
+        selected_img_path = current.data()
 
         # 将图片路径传递给result_display_widget.py里的img_display_view处理
         if selected_img_path:
-            self.current_row_signal.emit(index.row(), selected_img_path)
+            self.current_row_signal.emit(current.row(), selected_img_path)
+
+    def flush_current_row(self):
+        self.clicked.emit(self.currentIndex())
 
     # 重写paintEvent事件，实现功能:列表为空时，显示"文件加载区域"这几个字，加载文件后不显示
     def paintEvent(self, event):
