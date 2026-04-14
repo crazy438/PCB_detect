@@ -1,12 +1,10 @@
-import pathlib
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import QLabel, QHBoxLayout, QFormLayout, QFileDialog
-from qfluentwidgets import PushButton, LineEdit, HeaderCardWidget, FluentIcon
+from PyQt5.QtWidgets import QLabel, QFormLayout, QFileDialog
+from qfluentwidgets import LineEdit, HeaderCardWidget
 
+from custom_widget.line_edit import CustomLineEdit
 from shared_data import data
-from .predict_task import predict_task
-
 
 class ModelSettingWidget(HeaderCardWidget):
     def __init__(self, parent=None):
@@ -42,7 +40,7 @@ class ModelSettingWidget(HeaderCardWidget):
 
         self.imgsz_text = QLabel("图像缩放大小")
         self.imgsz_LineEdit = LineEdit()
-        self.imgsz_LineEdit.setText("640")
+        self.imgsz_LineEdit.setText("1280")
         self.imgsz_LineEdit.setValidator(QRegExpValidator(QRegExp(r"^[1-9]\d{0,4}$")))
         self.imgsz_LineEdit.editingFinished.connect(self.update_imgsz)
         self.setting_layout.addRow(self.imgsz_text, self.imgsz_LineEdit)
@@ -51,8 +49,7 @@ class ModelSettingWidget(HeaderCardWidget):
         self.viewLayout.addLayout(self.setting_layout)
 
         # 应用QSS
-        qss_path = pathlib.Path(__file__).parent / "resource/model_setting_widget.qss"
-        with open( qss_path, encoding='utf-8') as f:
+        with open( "resource/model_setting_widget.qss", encoding='utf-8') as f:
             self.setStyleSheet(f.read())
 
     def get_model_path(self):
@@ -75,15 +72,3 @@ class ModelSettingWidget(HeaderCardWidget):
 
     def update_imgsz(self):
         data.imgsz = eval(self.imgsz_LineEdit.text())
-
-class CustomLineEdit(LineEdit):
-    def __init__(self, label_text, parent=None):
-        super().__init__(parent)
-        self.text = QLabel(label_text)
-        self.line_edit = LineEdit()
-        self.line_edit.setReadOnly(True)
-        self.button = PushButton(FluentIcon.FOLDER, "浏览")
-
-        self.hbox = QHBoxLayout()
-        self.hbox.addWidget(self.line_edit)
-        self.hbox.addWidget(self.button)

@@ -48,9 +48,21 @@ class PredictTask(QObject):
                 imgsz=data.imgsz,
             )
 
+            data.result_table_items = []
+
             for i, img in enumerate(img_results):
                 output_name = Path(data.img_path_list[i]).name
                 img.save(filename=Path(data.save_dir) / output_name)
+
+                # img.names是类别id->类别的字典, img.boxes.cls是每个框的类别id
+                labels = [ img.names[cls.item()] for cls in img.boxes.cls ]
+
+                confs = [ round(conf.item(),2) for conf in img.boxes.conf ]
+
+                # 将每个框的xyxy格式转为(Xmin, Xmax, Ymin, Ymax)格式
+                xxyy = [ (int(xyxy[0].item()), int(xyxy[2].item()), int(xyxy[1].item()), int(xyxy[3].item())) for xyxy in img.boxes.xyxy ]
+
+                data.result_table_items.append((labels, confs, xxyy))
 
             del img_results
 

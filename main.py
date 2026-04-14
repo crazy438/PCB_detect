@@ -95,12 +95,6 @@ class CustomTitleBar(TitleBar):
     def setIcon(self, icon):
         self.iconLabel.setPixmap(QIcon(icon).pixmap(18, 18))
 
-    def resizeEvent(self, e):
-        pass
-        # self.searchLineEdit.move((self.width() - self.searchLineEdit.width()) //2, 8)
-
-
-
 class Window(FramelessWindow):
 
     window_resize_signal = pyqtSignal(int, int)

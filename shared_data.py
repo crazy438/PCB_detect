@@ -1,13 +1,6 @@
 from PyQt5.QtCore import QObject
 
 class SharedData(QObject):
-    # 单例模式，确保全局只有一个实例
-    _instance = None
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
-
     # 内部数据存储（私有）
     def __init__(self):
         super().__init__()
@@ -22,6 +15,7 @@ class SharedData(QObject):
         self.video_path_list = None
         self.time = None
         self.is_changed = False
+        self.result_table_items = None
         self._attrs = (
             "model_path", "save_path", "conf", "IoU", "imgsz",
             "verbose", "img_path_list", "video_path_list",

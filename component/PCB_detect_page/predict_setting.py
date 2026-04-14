@@ -1,12 +1,11 @@
 import pathlib
 import functools
 
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QFont, QPainter, QColor
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QHBoxLayout, QFileDialog, QButtonGroup, QListWidgetItem, QVBoxLayout
 from qfluentwidgets import PushButton, HeaderCardWidget, FluentIcon, RadioButton, ListWidget
-from PyQt5.QtCore import Qt
 
+from custom_widget.file_list_widget import FileListWidget
 from shared_data import data
 
 
@@ -37,8 +36,7 @@ class PredictSettingWidget(HeaderCardWidget):
         self.viewLayout.addLayout(self.predict_setting_layout)
 
         # 应用QSS
-        qss_path = pathlib.Path(__file__).parent / "resource/predict_setting_widget.qss"
-        with open( qss_path, encoding='utf-8') as f:
+        with open( "resource/predict_setting_widget.qss", encoding='utf-8') as f:
             self.setStyleSheet(f.read())
 
     def init_predict_mode_button(self):
@@ -86,42 +84,3 @@ class PredictSettingWidget(HeaderCardWidget):
                     video_path_list.append(file_path)
             data.img_path_list = img_path_list
             data.video_path_list = video_path_list
-
-# 在QFluentWidget的ListWidget基础上，实现设定样式,空列表显示提示文字,选中行切换信号的功能
-class FileListWidget(ListWidget):
-    # 将选中的图片路径传递给result_display_widget.py里的img_display_view
-    img_path_signal = pyqtSignal(str)
-
-    def __init__(self, tip_text=None, parent=None):
-        super().__init__(parent)
-        self.setAlternatingRowColors(True)
-        self.setStyleSheet(self.styleSheet() + "ListWidget { border: 1px solid #A9A9A9; border-radius: 8px; }")
-        self.tip_text = tip_text
-        self.currentRowChanged.connect(self.emit_img_path)
-
-    def flush_current_row(self):
-        self.currentRowChanged.emit(self.currentRow())
-
-    def emit_img_path(self):
-        selected_img_path = self.currentItem()
-
-        # 将图片路径传递给result_display_widget.py里的img_display_view处理
-        if selected_img_path:
-            self.img_path_signal.emit(selected_img_path.text())
-
-    # 重写paintEvent事件，实现功能:列表为空时，显示"文件加载区域"这几个字，加载文件后不显示
-    def paintEvent(self, event):
-        # 先调用父类的 paintEvent，保证正常绘制列表项和边框
-        super().paintEvent(event)
-
-        if self.count() == 0 and self.tip_text:
-            # 在视口上绘制，避开列表区域
-            painter = QPainter(self.viewport())
-
-            # 设置文本样式
-            painter.setPen(QColor(150, 150, 150))
-            painter.setFont(QFont("Microsoft YaHei", 25))
-
-            # 获取视口矩形，在中间绘制文本
-            viewport_rect = self.viewport().rect()
-            painter.drawText(viewport_rect, Qt.AlignCenter, self.tip_text)

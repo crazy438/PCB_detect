@@ -30,7 +30,8 @@ class PCBDetectPage(QWidget):
         self.signal_manage()
 
     def signal_manage(self):
-        self.predict_setting_widget.file_ListWidget.img_path_signal.connect(self.result_display_widget.img_display_view.add_image)
+        self.predict_setting_widget.file_ListWidget.current_row_signal.connect(self.result_display_widget.img_display_view.add_image)
+        self.predict_setting_widget.file_ListWidget.current_row_signal.connect(self.result_display_widget.result_table.add_item_from_results)
 
         # result_display里面的模型推理任务处理，禁用其他组件防止数据竞争导致崩溃
         predict_task.started_signal.connect(self.disable_widget)

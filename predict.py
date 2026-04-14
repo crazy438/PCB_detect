@@ -9,8 +9,8 @@ if __name__ == '__main__':
         conf=0.25,
         imgsz=1280,
     )
-    for i in metrics:
-        print(i)
+    for img in metrics:
+        print(img)
 
     # metrics = model.predict(
     #     ["PCB_DATASET_YOLO/debug/01_missing_hole_04.jpg", "PCB_DATASET_YOLO/debug/01_spur_10.jpg"],
