@@ -43,7 +43,10 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.button_layout = QHBoxLayout()
 
         self.run_button = PushButton("🚀 开始处理")
+        self.run_button.setObjectName("run_button")
         self.run_button.clicked.connect(self.model_predict)
+        # run_button_qss = "#run_button {background-color: #36B37E;}"
+        # setCustomStyleSheet(self.run_button, run_button_qss, run_button_qss)
 
         self.report_button = PushButton(FluentIcon.DOCUMENT, "生成报告")
 

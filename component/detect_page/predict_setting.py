@@ -2,8 +2,8 @@ import pathlib
 import functools
 
 from PyQt5.QtGui import QFont, QStandardItem
-from PyQt5.QtWidgets import QHBoxLayout, QFileDialog, QButtonGroup, QListWidgetItem, QVBoxLayout
-from qfluentwidgets import PushButton, HeaderCardWidget, FluentIcon, RadioButton, ListWidget
+from PyQt5.QtWidgets import QHBoxLayout, QFileDialog, QButtonGroup, QVBoxLayout
+from qfluentwidgets import PushButton, HeaderCardWidget, FluentIcon, RadioButton, setCustomStyleSheet
 
 from custom_widget.file_list_widget import FileListView
 from shared_data import data
@@ -19,14 +19,8 @@ class PredictSettingWidget(HeaderCardWidget):
         # 推理设置布局
         self.predict_setting_layout = QVBoxLayout()
 
-        # 初始化推理模式的三个互斥按钮
-        self.init_predict_mode_button()
-
-        # 初始化"添加文件"按钮
-        self.add_file_button = PushButton(FluentIcon.FOLDER, "添加文件")
-        self.add_file_button.setObjectName("open_file_button")
-        self.add_file_button.clicked.connect(functools.partial(self.get_file, QFont("Microsoft YaHei", 14)))
-        self.predict_setting_layout.addWidget(self.add_file_button)
+        # 初始化按钮
+        self.init_buttons()
 
         # 加载文件的文件列表
         self.file_view = FileListView("文件选择区域")
@@ -39,14 +33,13 @@ class PredictSettingWidget(HeaderCardWidget):
         with open( "resource/predict_setting_widget.qss", encoding='utf-8') as f:
             self.setStyleSheet(f.read())
 
-    def init_predict_mode_button(self):
-
+    def init_buttons(self):
         # QFluent内部用了setStyleSheet，导致QSS被阻断，只能外部附加样式写入
         self.img_video_mode_button = RadioButton("图片/视频模式", self)
-        self.img_video_mode_button.setStyleSheet("font-size: 20px; font-family: 'Microsoft YaHei';")
-
         self.camera_mode_button = RadioButton("摄像头模式", self)
-        self.camera_mode_button.setStyleSheet("font-size: 20px; font-family: 'Microsoft YaHei';")
+        radio_button_qss = "RadioButton {font-size: 20px; font-family: 'Microsoft YaHei';}"
+        setCustomStyleSheet(self.img_video_mode_button, radio_button_qss, radio_button_qss)
+        setCustomStyleSheet(self.camera_mode_button, radio_button_qss, radio_button_qss)
 
         # 互斥按钮组
         self.predict_button_group = QButtonGroup(self)
@@ -63,6 +56,11 @@ class PredictSettingWidget(HeaderCardWidget):
 
         # 将"推理模式"Qlabel和按钮添加到布局里面
         self.predict_setting_layout.addLayout(self.predict_mode_layout)
+
+        self.add_file_button = PushButton(FluentIcon.FOLDER, "添加文件")
+        self.add_file_button.setObjectName("open_file_button")
+        self.add_file_button.clicked.connect(functools.partial(self.get_file, QFont("Microsoft YaHei", 14)))
+        self.predict_setting_layout.addWidget(self.add_file_button)
 
     def get_file(self, qfont):
         file_path_list, _= QFileDialog.getOpenFileNames(self, "打开文件", filter="图片视频文件(*.jpg *.png *.bmp *.mp4 *.avi *.mkv)")

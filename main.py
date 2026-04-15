@@ -4,7 +4,7 @@ import sys
 import pathlib
 
 from PyQt5.QtCore import Qt, pyqtSignal, QEasingCurve, QUrl
-from PyQt5.QtGui import QIcon, QDesktopServices
+from PyQt5.QtGui import QIcon, QDesktopServices, QFont
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QApplication, QFrame, QWidget
 
 from qfluentwidgets import NavigationBar, NavigationItemPosition, MessageBox, PopUpAniStackedWidget
