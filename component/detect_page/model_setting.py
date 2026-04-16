@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QLabel, QFormLayout, QFileDialog
 from qfluentwidgets import LineEdit, HeaderCardWidget
 
 from custom_widget.line_edit import CustomLineEdit
+from custom_widget.model_choose_box import ModelChooseBox
 from shared_data import data
 
 class ModelSettingWidget(HeaderCardWidget):
@@ -15,11 +16,14 @@ class ModelSettingWidget(HeaderCardWidget):
 
         self.setting_layout = QFormLayout(self)
 
-        self.path_widget = CustomLineEdit("模型路径")
-        self.path_widget.button.clicked.connect(self.get_model_path)
-        self.setting_layout.addRow(self.path_widget.text, self.path_widget.hbox)
+        self.model_choose_widget = ModelChooseBox(
+            ("PCB缺陷检测-YOLO26", "其他"),
+            ("resource/models/best.pt", None)
+        )
+        self.model_choose_text = QLabel("模型选择")
+        self.setting_layout.addRow(self.model_choose_text, self.model_choose_widget)
 
-        self.save_widget = CustomLineEdit("结果保存路径")
+        self.save_widget = CustomLineEdit("输出路径")
         self.save_widget.button.clicked.connect(self.get_save_path)
         self.setting_layout.addRow(self.save_widget.text, self.save_widget.hbox)
 
@@ -49,14 +53,8 @@ class ModelSettingWidget(HeaderCardWidget):
         self.viewLayout.addLayout(self.setting_layout)
 
         # 应用QSS
-        with open( "resource/model_setting_widget.qss", encoding='utf-8') as f:
+        with open("resource/qss/model_setting_widget.qss", encoding='utf-8') as f:
             self.setStyleSheet(f.read())
-
-    def get_model_path(self):
-        model_path, _= QFileDialog.getOpenFileName(self, "打开模型文件", filter="模型文件(*.pt)")
-        if model_path:
-            self.path_widget.line_edit.setText(model_path)
-            data.model_path = model_path
 
     def get_save_path(self):
         save_path = QFileDialog.getExistingDirectory(self, "选择输出路径")

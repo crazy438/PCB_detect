@@ -1,4 +1,3 @@
-import pathlib
 import functools
 
 from PyQt5.QtGui import QFont, QStandardItem
@@ -7,6 +6,7 @@ from qfluentwidgets import PushButton, HeaderCardWidget, FluentIcon, RadioButton
 
 from custom_widget.file_list_widget import FileListView
 from shared_data import data
+from utils import is_img, is_video
 
 
 class PredictSettingWidget(HeaderCardWidget):
@@ -30,7 +30,7 @@ class PredictSettingWidget(HeaderCardWidget):
         self.viewLayout.addLayout(self.predict_setting_layout)
 
         # 应用QSS
-        with open( "resource/predict_setting_widget.qss", encoding='utf-8') as f:
+        with open("resource/qss/predict_setting_widget.qss", encoding='utf-8') as f:
             self.setStyleSheet(f.read())
 
     def init_buttons(self):
@@ -79,9 +79,9 @@ class PredictSettingWidget(HeaderCardWidget):
             img_path_list = []
             video_path_list = []
             for file_path in file_path_list:
-                if pathlib.Path(file_path).suffix in [".jpg", ".png", ".bmp"]:
+                if is_img(file_path):
                     img_path_list.append(file_path)
-                elif pathlib.Path(file_path).suffix in [".mp4", ".avi", ".mkv"]:
+                elif is_video(file_path):
                     video_path_list.append(file_path)
             data.img_path_list = img_path_list
             data.video_path_list = video_path_list

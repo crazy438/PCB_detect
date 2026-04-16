@@ -38,8 +38,11 @@ class PredictTask(QObject):
             Path(data.save_dir).mkdir(exist_ok=True) # 以当前时间创建输出文件夹
 
             # 采用视频流形式处理,返回帧生成器
+            # YOLO内部神秘bug PR #23191: https://github.com/ultralytics/ultralytics/pull/23191
+            # 即使save=False也要设置save_dir, 后面再设置则无效
             img_results = self.model.predict(
                 data.img_path_list,
+                save_dir=data.save_dir,
                 save=False,
                 stream=True,
                 verbose=data.verbose,
@@ -65,6 +68,17 @@ class PredictTask(QObject):
                 data.result_table_items.append((labels, confs, xxyy))
 
             del img_results
+
+            for video in data.video_path_list:
+                self.model.predict(
+                    video,
+                    save_dir=data.save_dir,
+                    save=True,
+                    verbose=False,
+                    conf=data.conf,
+                    iou=data.IoU,
+                    imgsz=data.imgsz,
+                )
 
             # 处理内存泄露
             yolo_gc()

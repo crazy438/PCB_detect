@@ -17,7 +17,6 @@ class CustomTableWidget(TableWidget):
         self.setColumnCount(len(header_labels))
         self.setHorizontalHeaderLabels(header_labels)
         self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        print(self.styleSheet())
         table_qss = """
                 QHeaderView::section {
                     font-size: 20px;

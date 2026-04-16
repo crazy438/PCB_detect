@@ -1,17 +1,16 @@
 # coding:utf-8
 from ultralytics import YOLO # YOLO含有Pytorch,高版本Pytorch的神秘bug要求在QT前导入
 import sys
-import pathlib
 
 from PyQt5.QtCore import Qt, pyqtSignal, QEasingCurve, QUrl
-from PyQt5.QtGui import QIcon, QDesktopServices, QFont
+from PyQt5.QtGui import QIcon, QDesktopServices
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QApplication, QFrame, QWidget
 
 from qfluentwidgets import NavigationBar, NavigationItemPosition, MessageBox, PopUpAniStackedWidget
 from qfluentwidgets import FluentIcon as FIF
 from qframelesswindow import FramelessWindow, TitleBar
 
-from component.detect_page.PCB_detect_page import DetectPage
+from component.detect_page.detect_page import DetectPage
 from component.history_page.history_page import HistoryPage
 
 class Widget(QWidget):
@@ -147,8 +146,8 @@ class Window(FramelessWindow):
         self.navigationBar.setCurrentItem(self.detect_page.objectName())
 
     def initWindow(self):
-        self.resize(1300, 800)
-        self.setWindowIcon(QIcon(str((pathlib.Path(__file__).parent / "resource/广大校徽.png"))))
+        self.resize(1500, 800)
+        self.setWindowIcon(QIcon("resource/广大校徽.png"))
         self.setWindowTitle("基于PyQt5的缺陷检测平台")
         self.titleBar.setAttribute(Qt.WA_StyledBackground)
 
@@ -157,7 +156,7 @@ class Window(FramelessWindow):
         self.move(w//2 - self.width()//2, h//2 - self.height()//2)
 
         # 应用QSS
-        with open( "resource/main.qss", encoding='utf-8') as f:
+        with open("resource/qss/main.qss", encoding='utf-8') as f:
             self.setStyleSheet(f.read())
 
     def addSubInterface(self, interface, icon, text: str, position=NavigationItemPosition.TOP, selectedIcon=None):
@@ -189,7 +188,7 @@ class Window(FramelessWindow):
         w.cancelButton.setText('下次一定')
 
         if w.exec():
-            QDesktopServices.openUrl(QUrl("https://afdian.net/a/zhiyiYo"))
+            QDesktopServices.openUrl(QUrl("https://github.com/crazy438/PCB_detect"))
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

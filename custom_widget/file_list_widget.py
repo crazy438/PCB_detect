@@ -1,9 +1,11 @@
 # 在QFluentWidget的ListWidget基础上，实现设定样式,空列表显示提示文字,选中行切换信号的功能
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QModelIndex
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QFont, QPainter, QColor, QStandardItemModel
-from networkx.classes import is_empty
-from qfluentwidgets import ListView
+from PyQt5.QtWidgets import QAbstractItemView
+from qfluentwidgets import ListView, setCustomStyleSheet
+
+from utils import is_img
 
 
 class FileListView(ListView):
@@ -13,9 +15,11 @@ class FileListView(ListView):
     def __init__(self, tip_text=None, parent=None):
         super().__init__(parent)
         self.tip_text = tip_text
-
         self.setAlternatingRowColors(True)
-        self.setStyleSheet(self.styleSheet() + "ListView { border: 1px solid #A9A9A9; border-radius: 8px; }")
+        self.setEditTriggers(QAbstractItemView.NoEditTriggers) # 禁用编辑
+
+        list_view_qss = "ListView { border: 1px solid #A9A9A9; border-radius: 8px; }"
+        setCustomStyleSheet(self, list_view_qss, list_view_qss)
 
         self.data_model = QStandardItemModel()
         self.setModel(self.data_model)
@@ -29,14 +33,14 @@ class FileListView(ListView):
             self.data_model.removeRows(0, self.data_model.rowCount())
 
     def emit_current_item(self, current, previous):
-        selected_img_path = current.data()
+        selected_file_path = current.data()
 
         # 将图片路径传递给result_display_widget.py里的img_display_view处理
-        if selected_img_path:
-            self.current_row_signal.emit(current.row(), selected_img_path)
+        if selected_file_path and is_img(selected_file_path):
+            self.current_row_signal.emit(current.row(), selected_file_path)
 
     def flush_current_row(self):
-        self.clicked.emit(self.currentIndex())
+        self.selectionModel().currentRowChanged.emit(self.model().index(self.currentIndex().row(), 0), QModelIndex())
 
     # 重写paintEvent事件，实现功能:列表为空时，显示"文件加载区域"这几个字，加载文件后不显示
     def paintEvent(self, event):

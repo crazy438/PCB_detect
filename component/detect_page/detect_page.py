@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 from .model_setting import ModelSettingWidget
 from .predict_setting import PredictSettingWidget
 from .result_display import ResultDisplayWidget
+from .Qwen4b_model import QwenModelWidget
 from .predict_task import predict_task
 
 class DetectPage(QWidget):
@@ -18,12 +19,14 @@ class DetectPage(QWidget):
         self.model_setting_widget = ModelSettingWidget(self)
         self.predict_setting_widget = PredictSettingWidget(self)
         self.result_display_widget = ResultDisplayWidget(self)
+        self.Qwen_model_widget = QwenModelWidget(self)
 
         self.h_box_layout.addLayout(self.v_box_layout_1, 2)
         self.h_box_layout.addLayout(self.v_box_layout_2, 3)
         self.v_box_layout_1.addWidget(self.model_setting_widget)
         self.v_box_layout_1.addWidget(self.predict_setting_widget)
         self.v_box_layout_2.addWidget(self.result_display_widget)
+        self.h_box_layout.addWidget(self.Qwen_model_widget, 1)
 
         # 各个组件之间的信号通信
         self.signal_manage()

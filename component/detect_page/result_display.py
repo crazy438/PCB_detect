@@ -36,7 +36,7 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.viewLayout.addLayout(self.result_display_layout)
 
         # 应用QSS
-        with open( "resource/result_display_widget.qss", encoding='utf-8') as f:
+        with open("resource/qss/result_display_widget.qss", encoding='utf-8') as f:
             self.setStyleSheet(f.read())
 
     def init_buttons(self):

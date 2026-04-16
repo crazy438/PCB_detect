@@ -4,7 +4,7 @@ import torch
 import albumentations as A
 from ultralytics import YOLO
 
-from config import args
+from yolo.config import args
 
 if __name__ == '__main__':
     # 初始化模型
