@@ -10,16 +10,14 @@ class SharedData(QObject):
         self.conf = 0.25
         self.IoU = 0.7
         self.imgsz = 640
-        self.verbose = False # YOLO model.predict的调试信息是否输出
         self.img_path_list = None
         self.video_path_list = None
-        self.time = None
         self.is_changed = False
+        self.verbose = False # YOLO model.predict的调试信息是否输出
         self.result_table_items = None
         self._attrs = (
             "model_path", "save_path", "conf", "IoU", "imgsz",
             "verbose", "img_path_list", "video_path_list",
-            "time"
         )
 
     def __setattr__(self, name, value):

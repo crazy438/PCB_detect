@@ -11,6 +11,7 @@ from utils import is_img
 class FileListView(ListView):
     # 将选中的图片路径传递给result_display_widget.py里的img_display_view
     current_row_signal = pyqtSignal(int, str)
+    current_text_signal = pyqtSignal(str)
 
     def __init__(self, tip_text=None, parent=None):
         super().__init__(parent)
@@ -41,6 +42,11 @@ class FileListView(ListView):
 
     def flush_current_row(self):
         self.selectionModel().currentRowChanged.emit(self.model().index(self.currentIndex().row(), 0), QModelIndex())
+
+    def emit_current_text(self):
+        selected_indexes = self.selectionModel().selectedIndexes()
+        if selected_indexes:
+            self.current_text_signal.emit(self.selectionModel().selectedIndexes()[0].data())
 
     # 重写paintEvent事件，实现功能:列表为空时，显示"文件加载区域"这几个字，加载文件后不显示
     def paintEvent(self, event):

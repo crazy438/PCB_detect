@@ -1,7 +1,9 @@
 # coding:utf-8
 from ultralytics import YOLO # YOLO含有Pytorch,高版本Pytorch的神秘bug要求在QT前导入
+import asyncio
+import threading
+import qasync
 import sys
-
 from PyQt5.QtCore import Qt, pyqtSignal, QEasingCurve, QUrl
 from PyQt5.QtGui import QIcon, QDesktopServices
 from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QApplication, QFrame, QWidget
@@ -12,6 +14,8 @@ from qframelesswindow import FramelessWindow, TitleBar
 
 from component.detect_page.detect_page import DetectPage
 from component.history_page.history_page import HistoryPage
+from utils import start_ollama_server
+
 
 class Widget(QWidget):
     def __init__(self, text: str, parent=None):
@@ -181,7 +185,7 @@ class Window(FramelessWindow):
     def showMessageBox(self):
         w = MessageBox(
             '支持作者🥰',
-            '个人开发不易，如果这个项目帮助到了您，可以考虑请作者喝一瓶快乐水🥤。您的支持就是作者开发和维护项目的动力🚀',
+            '您的支持就是作者开发和维护项目的动力🚀',
             self
         )
         w.yesButton.setText('来啦老弟')
@@ -195,11 +199,20 @@ class Window(FramelessWindow):
         self.window_resize_signal.emit(self.width(), self.height())
 
 if __name__ == '__main__':
+    # 程序启动时: 自动检查并开启ollama server用于调用本地大模型api
+    threading.Thread(target=start_ollama_server, daemon=True).start()
+
     QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
-
     app = QApplication(sys.argv)
+
+    # qasync
+    loop = qasync.QEventLoop(app)
+    asyncio.set_event_loop(loop)
+
     w = Window()
     w.show()
-    app.exec_()
+
+    with loop:
+        loop.run_forever()

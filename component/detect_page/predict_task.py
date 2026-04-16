@@ -84,6 +84,7 @@ class PredictTask(QObject):
             yolo_gc()
 
             data.is_changed = False  # 防止同样参数处理同样图片
+
         # 发送"完毕"信号
         self.finished_signal.emit()
 

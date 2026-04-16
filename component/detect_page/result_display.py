@@ -40,20 +40,9 @@ class ResultDisplayWidget(HeaderCardWidget):
             self.setStyleSheet(f.read())
 
     def init_buttons(self):
-        self.button_layout = QHBoxLayout()
-
         self.run_button = PushButton("🚀 开始处理")
-        self.run_button.setObjectName("run_button")
         self.run_button.clicked.connect(self.model_predict)
-        # run_button_qss = "#run_button {background-color: #36B37E;}"
-        # setCustomStyleSheet(self.run_button, run_button_qss, run_button_qss)
-
-        self.report_button = PushButton(FluentIcon.DOCUMENT, "生成报告")
-
-        self.button_layout.addWidget(self.run_button)
-        self.button_layout.addWidget(self.report_button)
-
-        self.result_display_layout.addLayout(self.button_layout, 1)
+        self.headerLayout.addWidget(self.run_button)
 
     def model_predict(self):
         # 输入校验
@@ -75,31 +64,29 @@ class ResultDisplayWidget(HeaderCardWidget):
 
         #  禁用按钮，防止处理期间再次触发
         self.run_button.setEnabled(False)
-        self.report_button.setEnabled(False)
 
         # 弹出"正在处理"消息框
         self.process_message = ProcessMessage('正在处理中', '请耐心等待哦~~', self.parent())
         self.process_message.show()
 
         # 启动推理任务线程
-        self.thread_manager.start()
+        self.thread.start()
 
     def init_thread(self):
         # 模型推理任务
-        self.thread_manager = QThread() # 创建线程管理器
-        predict_task.moveToThread(self.thread_manager)
-        self.thread_manager.started.connect(predict_task.start)
+        self.thread = QThread() # 创建线程管理器
+        predict_task.moveToThread(self.thread)
+        self.thread.started.connect(predict_task.start)
         predict_task.finished_signal.connect(self.predict_finished_process)
 
     # 模型预测任务线程执行完后的后处理
     def predict_finished_process(self):
-        self.thread_manager.quit() #  结束线程
-        self.thread_manager.wait()  # 阻塞线程
+        self.thread.quit() #  结束线程
+        self.thread.wait()  # 阻塞线程
 
         self.process_message.finished("处理完毕", f"结果已保存到{data.save_dir} 😆") # 结束"正在处理"消息框
         self.process_message = None
         self.run_button.setEnabled(True) # 恢复按钮
-        self.report_button.setEnabled(True)
 
     def add_results(self, current_row, img_path):
         if data.result_table_items:

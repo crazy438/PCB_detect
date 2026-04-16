@@ -1,0 +1,10 @@
+#ollama_model_header {
+    font-size: 24px;
+    font-family: 'Microsoft YaHei';
+    color: #0EA5E9;
+}
+
+OllamaModelWidget PushButton {
+    font-size: 20px;
+    font-family: "Microsoft YaHei";
+}

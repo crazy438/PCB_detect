@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QWidget
 from .model_setting import ModelSettingWidget
 from .predict_setting import PredictSettingWidget
 from .result_display import ResultDisplayWidget
-from .Qwen4b_model import QwenModelWidget
+from .ollama_model import OllamaModelWidget
 from .predict_task import predict_task
 
 class DetectPage(QWidget):
@@ -19,14 +19,14 @@ class DetectPage(QWidget):
         self.model_setting_widget = ModelSettingWidget(self)
         self.predict_setting_widget = PredictSettingWidget(self)
         self.result_display_widget = ResultDisplayWidget(self)
-        self.Qwen_model_widget = QwenModelWidget(self)
+        self.ollama_model_widget = OllamaModelWidget(self)
 
-        self.h_box_layout.addLayout(self.v_box_layout_1, 2)
-        self.h_box_layout.addLayout(self.v_box_layout_2, 3)
+        self.h_box_layout.addLayout(self.v_box_layout_1, 1)
+        self.h_box_layout.addLayout(self.v_box_layout_2, 2)
         self.v_box_layout_1.addWidget(self.model_setting_widget)
         self.v_box_layout_1.addWidget(self.predict_setting_widget)
         self.v_box_layout_2.addWidget(self.result_display_widget)
-        self.h_box_layout.addWidget(self.Qwen_model_widget, 1)
+        self.h_box_layout.addWidget(self.ollama_model_widget, 1)
 
         # 各个组件之间的信号通信
         self.signal_manage()
@@ -34,6 +34,8 @@ class DetectPage(QWidget):
     def signal_manage(self):
         self.predict_setting_widget.file_view.current_row_signal.connect(self.result_display_widget.img_display_view.add_image)
         self.predict_setting_widget.file_view.current_row_signal.connect(self.result_display_widget.add_results)
+        self.ollama_model_widget.report_button.clicked.connect(self.predict_setting_widget.file_view.emit_current_text)
+        self.predict_setting_widget.file_view.current_text_signal.connect(lambda file_path: self.ollama_model_widget.run_ollama_model(file_path))
 
         # result_display里面的模型推理任务处理，禁用其他组件防止数据竞争导致崩溃
         predict_task.started_signal.connect(self.disable_widget)

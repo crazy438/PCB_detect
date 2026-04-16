@@ -1,7 +1,8 @@
+from ultralytics import YOLO
 from PyQt5.QtCore import QObject
 from PyQt5.QtWidgets import QFileDialog
 from qfluentwidgets import EditableComboBox, setFont
-from ultralytics import YOLO
+
 
 from shared_data import data
 
