@@ -1,4 +1,4 @@
-from qfluentwidgets import PlainTextEdit, setFont
+from qfluentwidgets import setFont, PlainTextEdit
 
 
 class OllamaOutputText(PlainTextEdit):

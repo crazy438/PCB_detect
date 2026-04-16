@@ -37,15 +37,7 @@ class DetectPage(QWidget):
         self.ollama_model_widget.report_button.clicked.connect(self.predict_setting_widget.file_view.emit_current_text)
         self.predict_setting_widget.file_view.current_text_signal.connect(lambda file_path: self.ollama_model_widget.run_ollama_model(file_path))
 
-        # result_display里面的模型推理任务处理，禁用其他组件防止数据竞争导致崩溃
-        predict_task.started_signal.connect(self.disable_widget)
+        # result_display里面的模型推理任务处理，禁用组件交互功能防止数据竞争导致崩溃
+        predict_task.started_signal.connect(lambda: self.setDisabled(True))
         predict_task.finished_signal.connect(self.predict_setting_widget.file_view.flush_current_row)
-        predict_task.finished_signal.connect(self.enable_widget)
-
-    def disable_widget(self):
-        self.model_setting_widget.setDisabled(True)
-        self.predict_setting_widget.setDisabled(True)
-
-    def enable_widget(self):
-        self.model_setting_widget.setDisabled(False)
-        self.predict_setting_widget.setDisabled(False)
+        predict_task.finished_signal.connect(lambda: self.setDisabled(False))

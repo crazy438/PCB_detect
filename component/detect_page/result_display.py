@@ -62,9 +62,6 @@ class ResultDisplayWidget(HeaderCardWidget):
             w.exec()
             return
 
-        #  禁用按钮，防止处理期间再次触发
-        self.run_button.setEnabled(False)
-
         # 弹出"正在处理"消息框
         self.process_message = ProcessMessage('正在处理中', '请耐心等待哦~~', self.parent())
         self.process_message.show()
@@ -86,7 +83,6 @@ class ResultDisplayWidget(HeaderCardWidget):
 
         self.process_message.finished("处理完毕", f"结果已保存到{data.save_dir} 😆") # 结束"正在处理"消息框
         self.process_message = None
-        self.run_button.setEnabled(True) # 恢复按钮
 
     def add_results(self, current_row, img_path):
         if data.result_table_items:
