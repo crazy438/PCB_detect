@@ -6,7 +6,7 @@ from custom_widget.img_display_view import ImgDisplayView
 from custom_widget.message_box import CustomMessageBox
 from custom_widget.process_message import ProcessMessage
 from custom_widget.table_widget import CustomTableWidget
-from .predict_task import PredictTask
+from .predict_task import ImgPredictTask, CameraPredictTask
 from shared_data import data
 
 
@@ -70,18 +70,18 @@ class ResultDisplayWidget(HeaderCardWidget):
             w.exec()
             return
 
-        # 启动推理任务
+        # 禁用整个检测页的交互,防止数据竞争
         self.predict_started_signal.emit()
 
         # 弹出"正在处理"消息框
         self.process_message = ProcessMessage('正在处理中', '请耐心等待哦~~', self)
         self.process_message.show()
 
-        predict_task = PredictTask()
-        predict_task.signals.finished_signal.connect(self.predicted_finished_process)
-        self.pool.start(predict_task)
+        img_predict_task = ImgPredictTask()
+        img_predict_task.signals.finished_signal.connect(self.predict_finished_process)
+        self.pool.start(img_predict_task)
 
-    def predicted_finished_process(self):
+    def predict_finished_process(self):
         self.process_message.finished("处理完毕", f"结果已保存到{data.save_dir} 😆")  # 结束"正在处理"消息框
         self.process_message = None
         self.predict_finished_signal.emit()
@@ -91,6 +91,18 @@ class ResultDisplayWidget(HeaderCardWidget):
             w = CustomMessageBox("请加载模型", '左侧"推理设置"面板，点击"浏览"按钮加载模型', self.window())
             w.exec()
             return
+
+        # 禁用整个检测页的交互,防止数据竞争
+        self.predict_started_signal.emit()
+        self.camera_button.setText("请按Q退出摄像头检测")
+
+        camera_predict_task = CameraPredictTask()
+        camera_predict_task.signals.finished_signal.connect(self.camera_predict_finished)
+        self.pool.start(camera_predict_task)
+
+    def camera_predict_finished(self):
+        self.camera_button.setText("📷 摄像头检测")
+        self.predict_finished_signal.emit()
 
     def add_results(self, current_row, img_path):
         if data.result_table_items:
