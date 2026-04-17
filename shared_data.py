@@ -4,7 +4,7 @@ class SharedData(QObject):
     # 内部数据存储（私有）
     def __init__(self):
         super().__init__()
-        self.model_path: str = None
+        self.model = None
         self.save_path: str = None
         self.save_dir: str = None
         self.conf = 0.25

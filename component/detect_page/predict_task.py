@@ -21,16 +21,9 @@ class PredictTask(QObject):
 
     def __init__(self):
         super().__init__()
-        self.model_path = ""
-        self.model = None
 
     def start(self):
         self.started_signal.emit() # 通知PCB_detect_page禁用其他组件，防止数据竞争导致崩溃
-
-        # data.model_path发生了变化才加载新的模型
-        if self.model_path != data.model_path:
-            self.model_path = data.model_path
-            self.model = YOLO(self.model_path)
 
         # 只有参数发生变化才处理，阻止同样参数处理同样的图片视频
         if data.is_changed:
@@ -40,8 +33,8 @@ class PredictTask(QObject):
             # 采用视频流形式处理,返回帧生成器
             # YOLO内部神秘bug PR #23191: https://github.com/ultralytics/ultralytics/pull/23191
             # 即使save=False也要设置save_dir, 后面再设置则无效
-            img_results = self.model.predict(
-                data.img_path_list,
+            img_results = data.model.predict(
+                source=data.img_path_list,
                 save_dir=data.save_dir,
                 save=False,
                 stream=True,
@@ -70,8 +63,8 @@ class PredictTask(QObject):
             del img_results
 
             for video in data.video_path_list:
-                self.model.predict(
-                    video,
+                data.model.predict(
+                    source=video,
                     save_dir=data.save_dir,
                     save=True,
                     verbose=False,

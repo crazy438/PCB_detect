@@ -47,7 +47,7 @@ class ResultDisplayWidget(HeaderCardWidget):
     def model_predict(self):
         # 输入校验
         # conf, IoU, imgsz的输入校验已经在LineEdit()部分通过正则表达式完成
-        if not data.model_path:
+        if not data.model:
             w = CustomMessageBox("请加载模型", '左侧"模型设置"面板，点击"浏览"按钮加载模型', self.window())
             w.exec()
             return

@@ -87,4 +87,4 @@ class OllamaModelWidget(HeaderCardWidget):
         finally:
             self.is_running = False
             self.report_button.setEnabled(True)
-            self.process_message.finished("处理完毕", f"结果已保存到{data.save_dir} 😆")  # 结束"正在处理"消息框
+            self.process_message.finished("生成完毕", "")  # 结束"正在处理"消息框

@@ -113,7 +113,6 @@ class Window(FramelessWindow):
         # create sub interface
         self.detect_page = DetectPage("PCB检测页面", self)
         self.history_page = HistoryPage("历史记录", self)
-        self.videoInterface = Widget('Video Interface', self)
         self.libraryInterface = Widget('library Interface', self)
 
         # initialize layout
@@ -134,7 +133,6 @@ class Window(FramelessWindow):
     def initNavigation(self):
         self.addSubInterface(self.detect_page, FIF.HOME, "缺陷检测", selectedIcon=FIF.HOME_FILL)
         self.addSubInterface(self.history_page, FIF.HISTORY, "历史记录")
-        self.addSubInterface(self.videoInterface, FIF.VIDEO, '视频')
 
         self.addSubInterface(self.libraryInterface, FIF.BOOK_SHELF, '库', NavigationItemPosition.BOTTOM, FIF.LIBRARY_FILL)
         self.navigationBar.addItem(

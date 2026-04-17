@@ -1,3 +1,4 @@
+import os
 import pathlib
 import socket
 import subprocess
@@ -40,7 +41,8 @@ def start_ollama_server(host="localhost", port=11434, timeout=1):
             stderr=subprocess.PIPE,
             stdin=subprocess.PIPE,
             startupinfo=startupinfo,
-            creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
+            creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
+            env = os.environ.copy(),
         )
         print("已启动 ollama server")
 
