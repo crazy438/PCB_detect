@@ -1,10 +1,8 @@
-from ultralytics import YOLO # YOLO含Pytorch,Pytorch高版本神秘导包顺序bug，要让YOLO在QT前导入
-from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt5.QtCore import pyqtSignal, QObject, QRunnable
 import torch
 import gc
 from datetime import datetime
 from pathlib import Path
-
 from shared_data import data
 
 # YOLO自带的内存泄露问题，手动处理
@@ -13,18 +11,18 @@ def yolo_gc():
     gc.collect()  # 触发Python GC
     gc.garbage.clear() # 触发循环垃圾回收
 
-# 业务顺序能够保证shared_data不会同时读写
-class PredictTask(QObject):
-    # 模型推理启动和完毕的信号
-    started_signal = pyqtSignal()
+class PredictSignals(QObject):
     finished_signal = pyqtSignal()
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
+# 业务顺序能够保证shared_data不会同时读写
+class PredictTask(QRunnable):
     def __init__(self):
         super().__init__()
+        self.signals = PredictSignals()
 
-    def start(self):
-        self.started_signal.emit() # 通知PCB_detect_page禁用其他组件，防止数据竞争导致崩溃
-
+    def run(self):
         # 只有参数发生变化才处理，阻止同样参数处理同样的图片视频
         if data.is_changed:
             data.save_dir = Path(data.save_path) / datetime.now().strftime("%Y年%m月%d日%H-%M-%S")
@@ -79,6 +77,4 @@ class PredictTask(QObject):
             data.is_changed = False  # 防止同样参数处理同样图片
 
         # 发送"完毕"信号
-        self.finished_signal.emit()
-
-predict_task = PredictTask()
+        self.signals.finished_signal.emit()

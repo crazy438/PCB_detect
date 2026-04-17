@@ -1,6 +1,6 @@
 # 隐藏掉cancel按钮的自定义样式QFluentWidget MessageBox
 from PyQt5.QtGui import QFont
-from qfluentwidgets import MessageBox, setFont
+from qfluentwidgets import MessageBox
 
 
 class CustomMessageBox(MessageBox):
