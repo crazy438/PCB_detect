@@ -115,6 +115,7 @@ class ResultDisplayWidget(HeaderCardWidget):
                 results = db.defects_query((current_img_timstamp,))
             if results:
                 self.result_table.setRowCount(len(results))
+                self.setUpdatesEnabled(False)
                 for i, (defect_type, conf, Xmin, Xmax, Ymin, Ymax) in enumerate(results):
                     self.result_table.add_item(i, 0, defect_type)
                     self.result_table.add_item(i, 1, conf)
@@ -122,3 +123,4 @@ class ResultDisplayWidget(HeaderCardWidget):
                     self.result_table.add_item(i, 3, Xmax)
                     self.result_table.add_item(i, 4, Ymin)
                     self.result_table.add_item(i, 5, Ymax)
+                self.setUpdatesEnabled(True)

@@ -23,15 +23,16 @@ class DefectStatisticsWidget(HeaderCardWidget):
         with open("resource/qss/defect_statistics.qss", encoding='utf-8') as f:
             self.setStyleSheet(f.read())
 
-    def add_results(self, timestamp):
-        if timestamp:
+    def add_results(self, timestamps):
+        if timestamps:
             self.defect_table.clearContents()
 
             #  根据图片的处理时间查询对应的缺陷数据
             with Database() as db:
-                results = db.defects_query((eval(timestamp),))
+                results = db.defects_query(timestamps)
             if results:
                 self.defect_table.setRowCount(len(results))
+                self.setUpdatesEnabled(False)
                 for i, (defect_type, conf, Xmin, Xmax, Ymin, Ymax) in enumerate(results):
                     self.defect_table.add_item(i, 0, defect_type)
                     self.defect_table.add_item(i, 1, conf)
@@ -39,3 +40,4 @@ class DefectStatisticsWidget(HeaderCardWidget):
                     self.defect_table.add_item(i, 3, Xmax)
                     self.defect_table.add_item(i, 4, Ymin)
                     self.defect_table.add_item(i, 5, Ymax)
+                self.setUpdatesEnabled(True)

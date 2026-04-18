@@ -1,5 +1,6 @@
 import time
 from PyQt5.QtCore import pyqtSignal, QTimer
+from PyQt5.QtWidgets import QAbstractItemView
 
 from custom_widget.message_box import TipMessageBox
 from custom_widget.table_widget import ResultTableWidget
@@ -7,11 +8,12 @@ from custom_widget.table_widget import ResultTableWidget
 from database import Database
 
 class HistoryTable(ResultTableWidget):
-    emit_seletected_timestamp = pyqtSignal(str)
+    emit_seletected_timestamp = pyqtSignal(list)
     def __init__(self, header_labels, parent=None):
         super().__init__(header_labels, parent)
         self.hideColumn(0)
-        self.currentCellChanged.connect(lambda index: self.emit_seletected_timestamp.emit(self.item(index, 0).text() if self.item(index, 0) else ""))
+        self.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.itemSelectionChanged.connect(self.get_selected_timestamps)
         self.flush_history_table()
 
     def flush_history_table(self):
@@ -20,6 +22,7 @@ class HistoryTable(ResultTableWidget):
             history = db.imgs_query()
         if history:
             self.setRowCount(len(history))
+            self.setUpdatesEnabled(False)
             for i, (timestamp, img_path, model, n_defects) in enumerate(history):
                 process_time = time.strftime("%Y年%m月%d日%H时%M分%S秒", time.localtime(timestamp/1000))
                 self.add_item(i, 0, timestamp)
@@ -27,9 +30,17 @@ class HistoryTable(ResultTableWidget):
                 self.add_item(i, 2, img_path)
                 self.add_item(i, 3, model)
                 self.add_item(i, 4, n_defects)
+            self.setUpdatesEnabled(True)
 
         # 延迟10ms切换索引, 给控件渲染时间
         QTimer.singleShot(10, lambda: self.setCurrentCell(0,0))
+
+    def get_selected_timestamps(self):
+        selected_rows = self.selectionModel().selectedRows()
+        if selected_rows:
+            timestamps= [eval(self.item(row.row(), 0).text()) for row in selected_rows]
+            self.emit_seletected_timestamp.emit(timestamps)
+
 
     def delete_selected_rows(self):
         selected_rows = self.selectionModel().selectedRows()
