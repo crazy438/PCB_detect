@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QAbstractItemView
 from qfluentwidgets import ListView, setCustomStyleSheet
 
 from custom_widget.message_box import TipMessageBox
-from utils import is_img
+from utils.utils import is_img
 
 
 class FileListView(ListView):

@@ -7,7 +7,7 @@ from custom_widget.file_list_widget import FileListView
 from custom_widget.line_edit import CustomLineEdit
 from custom_widget.model_choose_box import ModelChooseBox
 from shared_data import shared_data
-from utils import is_img, is_video
+from utils.utils import is_img, is_video
 
 
 class ModelSettingWidget(HeaderCardWidget):

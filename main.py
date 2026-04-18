@@ -1,5 +1,5 @@
 # coding:utf-8
-from ultralytics import YOLO # YOLO含有Pytorch,高版本Pytorch的神秘bug要求在QT前导入
+from ultralytics import YOLO # 高版本Pytorch的神秘bug,要在QT前导入!
 import asyncio
 import threading
 import qasync
@@ -15,7 +15,7 @@ from qframelesswindow import FramelessWindow
 from component.detect_page.detect_page import DetectPage
 from component.history_page.history_page import HistoryPage
 from custom_widget.main_window_widget import CustomTitleBar, StackedWidget
-from utils import start_ollama_server
+from utils.utils import start_ollama_server
 
 class Window(FramelessWindow):
 

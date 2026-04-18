@@ -23,5 +23,5 @@ class HistoryPage(QWidget):
 
 
         self.h_box_layout.addWidget(self.history_table_widget)
-        self.h_box_layout.addWidget(self.defect_statistics_widget)
+        self.h_box_layout.addWidget(self.defect_statistics_widget,3)
 

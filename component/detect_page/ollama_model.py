@@ -9,7 +9,7 @@ import qasync
 
 from custom_widget.process_message import ProcessMessage
 from shared_data import shared_data
-from utils import is_img
+from utils.utils import is_img
 
 
 class OllamaModelWidget(HeaderCardWidget):

@@ -1,5 +1,8 @@
-from PyQt5.QtWidgets import QVBoxLayout
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
+from PyQt5.QtWidgets import QVBoxLayout, QWidget
+from PyQt5.QtCore import QUrl, QFileInfo
 from qfluentwidgets import HeaderCardWidget
+from qframelesswindow.webengine import FramelessWebEngineView
 
 from custom_widget.table_widget import ResultTableWidget
 from database import Database
@@ -13,8 +16,11 @@ class DefectStatisticsWidget(HeaderCardWidget):
 
         self.v_box_layout = QVBoxLayout(self)
 
+        self.web_view = WebEngineWidget(self)
+        self.v_box_layout.addWidget(self.web_view, 1)
+
         self.defect_table = ResultTableWidget(["缺陷类型", "置信度", "Xmin", "Xmax", "Ymin", "Ymax"])
-        self.v_box_layout.addWidget(self.defect_table)
+        # self.v_box_layout.addWidget(self.defect_table, 1)
 
         # 要把组件和布局添加到HeaderCardWidget的viewLayout才会显示
         self.viewLayout.addLayout(self.v_box_layout)
@@ -41,3 +47,22 @@ class DefectStatisticsWidget(HeaderCardWidget):
                     self.defect_table.add_item(i, 4, Ymin)
                     self.defect_table.add_item(i, 5, Ymax)
                 self.setUpdatesEnabled(True)
+
+class WebEngineWidget(QWidget):
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setObjectName("web_engine")
+        self.web_view = FramelessWebEngineView(self)
+        self.web_view.settings().setAttribute(QWebEngineSettings.JavascriptEnabled, True)
+        self.web_view.settings().setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls, True)
+
+        # self.web_view.load(QUrl("https://www.baidu.com/"))
+        self.web_view.load(QUrl.fromLocalFile(r"C:\Users\27843\Desktop\detection_platform\utils\myr.html"))
+        self.vBoxLayout = QVBoxLayout(self)
+        self.vBoxLayout.setContentsMargins(0, 0, 0, 0)
+        self.vBoxLayout.addWidget(self.web_view)
+
+    # def load_html(self, html_path=r"C:\Users\27843\Desktop\detection_platform\utils\myr.html"):
+    #     # self.webView.load(QUrl("https://www.baidu.com/"))
+    #     self.web_view.load(QUrl.fromLocalFile(html_path))
