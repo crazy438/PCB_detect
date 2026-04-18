@@ -14,6 +14,7 @@ from qframelesswindow import FramelessWindow, TitleBar
 
 from component.detect_page.detect_page import DetectPage
 from component.history_page.history_page import HistoryPage
+from database import Database
 from utils import start_ollama_server
 
 
@@ -113,7 +114,6 @@ class Window(FramelessWindow):
         # create sub interface
         self.detect_page = DetectPage("PCB检测页面", self)
         self.history_page = HistoryPage("历史记录", self)
-        self.libraryInterface = Widget('library Interface', self)
 
         # initialize layout
         self.initLayout()
@@ -133,8 +133,6 @@ class Window(FramelessWindow):
     def initNavigation(self):
         self.addSubInterface(self.detect_page, FIF.HOME, "缺陷检测", selectedIcon=FIF.HOME_FILL)
         self.addSubInterface(self.history_page, FIF.HISTORY, "历史记录")
-
-        self.addSubInterface(self.libraryInterface, FIF.BOOK_SHELF, '库', NavigationItemPosition.BOTTOM, FIF.LIBRARY_FILL)
         self.navigationBar.addItem(
             routeKey='Help',
             icon=FIF.HELP,

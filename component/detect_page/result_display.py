@@ -3,11 +3,12 @@ from PyQt5.QtWidgets import QVBoxLayout
 from qfluentwidgets import PushButton, HeaderCardWidget
 
 from custom_widget.img_display_view import ImgDisplayView
-from custom_widget.message_box import CustomMessageBox
+from custom_widget.message_box import TipMessageBox
 from custom_widget.process_message import ProcessMessage
-from custom_widget.table_widget import CustomTableWidget
+from custom_widget.table_widget import ResultTableWidget
+from database import Database
 from .predict_task import ImgPredictTask, CameraPredictTask
-from shared_data import data
+from shared_data import shared_data
 
 
 class ResultDisplayWidget(HeaderCardWidget):
@@ -30,7 +31,7 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.init_buttons()
 
         # 检测结果的表格
-        self.result_table = CustomTableWidget(5, ["缺陷类型", "置信度", "Xmin", "Xmax", "Ymin", "Ymax"])
+        self.result_table = ResultTableWidget(5, ["缺陷类型", "置信度", "Xmin", "Xmax", "Ymin", "Ymax"])
         self.result_display_layout.addWidget(self.result_table, 2)
 
         # 获取全局线程池
@@ -40,7 +41,7 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.viewLayout.addLayout(self.result_display_layout)
 
         # 应用QSS
-        with open("resource/qss/result_display_widget.qss", encoding='utf-8') as f:
+        with open("resource/qss/result_display.qss", encoding='utf-8') as f:
             self.setStyleSheet(f.read())
 
     def init_buttons(self):
@@ -55,18 +56,18 @@ class ResultDisplayWidget(HeaderCardWidget):
     def model_predict(self):
         # 输入校验
         # conf, IoU, imgsz的输入校验已经在LineEdit()部分通过正则表达式完成
-        if not data.model:
-            w = CustomMessageBox("请加载模型", '左侧"推理设置"面板，点击"浏览"按钮加载模型', self.window())
+        if not shared_data.model_name:
+            w = TipMessageBox("请加载模型", '左侧"推理设置"面板，点击"浏览"按钮加载模型', self.window())
             w.exec()
             return
 
-        if not data.save_path:
-            w = CustomMessageBox("请选择输出路径", '左侧"推理设置"面板，点击"浏览"按钮选择输出路径', self.window())
+        if not shared_data.save_path:
+            w = TipMessageBox("请选择输出路径", '左侧"推理设置"面板，点击"浏览"按钮选择输出路径', self.window())
             w.exec()
             return
 
-        if not (data.img_path_list or data.video_path_list):
-            w = CustomMessageBox("请加载图片或视频文件", '左侧"推理设置"面板，点击"添加文件"按钮加载图片或视频', self.window())
+        if not (shared_data.img_path_list or shared_data.video_path_list):
+            w = TipMessageBox("请加载图片或视频文件", '左侧"推理设置"面板，点击"添加文件"按钮加载图片或视频', self.window())
             w.exec()
             return
 
@@ -82,13 +83,13 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.pool.start(img_predict_task)
 
     def predict_finished_process(self):
-        self.process_message.finished("处理完毕", f"结果已保存到{data.save_dir} 😆")  # 结束"正在处理"消息框
+        self.process_message.finished("处理完毕", f"结果已保存到{shared_data.save_dir} 😆")  # 结束"正在处理"消息框
         self.process_message = None
         self.predict_finished_signal.emit()
 
     def camera_predict(self):
-        if not data.model:
-            w = CustomMessageBox("请加载模型", '左侧"推理设置"面板，点击"浏览"按钮加载模型', self.window())
+        if not shared_data.model_name:
+            w = TipMessageBox("请加载模型", '左侧"推理设置"面板，点击"浏览"按钮加载模型', self.window())
             w.exec()
             return
 
@@ -105,15 +106,18 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.predict_finished_signal.emit()
 
     def add_results(self, current_row, img_path):
-        if data.result_table_items:
+        if shared_data.process_imgs_timestamp:
             self.result_table.clearContents()
-            labels, confs, coordinates = data.result_table_items[current_row]
-            for i, label in enumerate(labels):
-                self.result_table.add_item(i, 0, label)
-            for i, conf in enumerate(confs):
-                self.result_table.add_item(i, 1, conf)
-            for i, (Xmin, Xmax, Ymin, Ymax) in enumerate(coordinates):
-                self.result_table.add_item(i, 2, Xmin)
-                self.result_table.add_item(i, 3, Xmax)
-                self.result_table.add_item(i, 4, Ymin)
-                self.result_table.add_item(i, 5, Ymax)
+
+            #  根据图片的处理时间查询对应的缺陷数据
+            with Database() as db:
+                current_img_timstamp = shared_data.process_imgs_timestamp[current_row]
+                results = db.defects_query((current_img_timstamp,))
+            if results:
+                for i, (defect_type, conf, Xmin, Xmax, Ymin, Ymax) in enumerate(results):
+                    self.result_table.add_item(i, 0, defect_type)
+                    self.result_table.add_item(i, 1, conf)
+                    self.result_table.add_item(i, 2, Xmin)
+                    self.result_table.add_item(i, 3, Xmax)
+                    self.result_table.add_item(i, 4, Ymin)
+                    self.result_table.add_item(i, 5, Ymax)

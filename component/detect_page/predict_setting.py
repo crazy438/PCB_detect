@@ -6,7 +6,7 @@ from qfluentwidgets import LineEdit, HeaderCardWidget, PushButton, FluentIcon
 from custom_widget.file_list_widget import FileListView
 from custom_widget.line_edit import CustomLineEdit
 from custom_widget.model_choose_box import ModelChooseBox
-from shared_data import data
+from shared_data import shared_data
 from utils import is_img, is_video
 
 
@@ -14,7 +14,7 @@ class ModelSettingWidget(HeaderCardWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setTitle("推理设置")
-        self.headerLabel.setObjectName("model_setting_header")
+        self.headerLabel.setObjectName("predict_setting_header")
         self.setBorderRadius(8)
 
         self.setting_layout = QFormLayout(self)
@@ -65,23 +65,23 @@ class ModelSettingWidget(HeaderCardWidget):
         self.viewLayout.addLayout(self.setting_layout)
 
         # 应用QSS
-        with open("resource/qss/model_setting_widget.qss", encoding='utf-8') as f:
+        with open("resource/qss/predict_setting.qss", encoding='utf-8') as f:
             self.setStyleSheet(f.read())
 
     def get_save_path(self):
         save_path = QFileDialog.getExistingDirectory(self, "选择输出路径")
         if save_path:
             self.save_widget.line_edit.setText(save_path)
-            data.save_path = save_path
+            shared_data.save_path = save_path
 
     def update_conf(self):
-        data.conf = eval(self.conf_LineEdit.text())
+        shared_data.conf = eval(self.conf_LineEdit.text())
 
     def update_IoU(self):
-        data.IoU = eval(self.IoU_LineEdit.text())
+        shared_data.IoU = eval(self.IoU_LineEdit.text())
 
     def update_imgsz(self):
-        data.imgsz = eval(self.imgsz_LineEdit.text())
+        shared_data.imgsz = eval(self.imgsz_LineEdit.text())
 
     def get_file(self, qfont):
         file_path_list, _= QFileDialog.getOpenFileNames(self, "打开文件", filter="图片视频文件(*.jpg *.png *.bmp *.mp4 *.avi *.mkv)")
@@ -104,5 +104,5 @@ class ModelSettingWidget(HeaderCardWidget):
                     img_path_list.append(file_path)
                 elif is_video(file_path):
                     video_path_list.append(file_path)
-            data.img_path_list = img_path_list
-            data.video_path_list = video_path_list
+            shared_data.img_path_list = tuple(img_path_list)
+            shared_data.video_path_list = tuple(video_path_list)

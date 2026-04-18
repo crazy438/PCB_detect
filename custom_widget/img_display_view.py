@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QFont, QPainter, QColor
 from qfluentwidgets import HorizontalFlipView
 
-from shared_data import data
+from shared_data import shared_data
 
 class ImgDisplayView(HorizontalFlipView):
     def __init__(self, tip_text=None, parent=None):
@@ -16,8 +16,8 @@ class ImgDisplayView(HorizontalFlipView):
         self.clear()
         self.addImage(img_path)
 
-        if data.save_dir:
-            predict_img_path = data.save_dir / pathlib.Path(img_path).name
+        if shared_data.save_dir:
+            predict_img_path = shared_data.save_dir / pathlib.Path(img_path).name
             if predict_img_path.exists():
                 self.addImage(str(predict_img_path))
 

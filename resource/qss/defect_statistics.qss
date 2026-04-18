@@ -1,0 +1,5 @@
+#defect_statistics_header {
+    font-size: 24px;
+    font-family: 'Microsoft YaHei';
+    color: #0EA5E9;
+}

@@ -5,6 +5,7 @@ class SharedData(QObject):
     def __init__(self):
         super().__init__()
         self.model = None
+        self.model_name = None
         self.save_path: str = None
         self.save_dir: str = None
         self.conf = 0.25
@@ -14,7 +15,9 @@ class SharedData(QObject):
         self.video_path_list = None
         self.is_changed = False
         self.verbose = False # YOLO model.predict的调试信息是否输出
-        self.result_table_items = None
+        self.process_imgs_timestamp = None
+        self.defects_data = None
+        self.database_path = "resource/history.db"
         self._attrs = (
             "model_path", "save_path", "conf", "IoU", "imgsz",
             "verbose", "img_path_list", "video_path_list",
@@ -28,4 +31,4 @@ class SharedData(QObject):
         # 调用原本的__setattr__
         super().__setattr__(name, value)
 
-data = SharedData()
+shared_data = SharedData()

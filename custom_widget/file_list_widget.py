@@ -5,6 +5,7 @@ from PyQt5.QtGui import QFont, QPainter, QColor, QStandardItemModel
 from PyQt5.QtWidgets import QAbstractItemView
 from qfluentwidgets import ListView, setCustomStyleSheet
 
+from custom_widget.message_box import TipMessageBox
 from utils import is_img
 
 
@@ -47,6 +48,10 @@ class FileListView(ListView):
         selected_indexes = self.selectionModel().selectedIndexes()
         if selected_indexes:
             self.current_text_signal.emit(self.selectionModel().selectedIndexes()[0].data())
+        else:
+            w = TipMessageBox("请加载图片或视频文件", '左侧"推理设置"面板，点击"添加文件"按钮加载图片或视频', self.window())
+            w.exec()
+            return
 
     # 重写paintEvent事件，实现功能:列表为空时，显示"文件加载区域"这几个字，加载文件后不显示
     def paintEvent(self, event):

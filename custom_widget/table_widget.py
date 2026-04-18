@@ -3,7 +3,7 @@ from PyQt5.QtGui import QFont
 from qfluentwidgets import TableWidget, setCustomStyleSheet
 from PyQt5.QtWidgets import QHeaderView, QTableWidgetItem, QAbstractItemView
 
-class CustomTableWidget(TableWidget):
+class ResultTableWidget(TableWidget):
     def __init__(self, row_count, header_labels, parent=None):
         super().__init__(parent)
         self.setBorderVisible(True)

@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
 
-from custom_widget.table_widget import CustomTableWidget
+from component.history_page.defect_statistics import DefectStatisticsWidget
+from component.history_page.history_table import HistoryTableWidget
+from database import Database
 
 class HistoryPage(QWidget):
     def __init__(self, text, parent=None):
@@ -8,13 +10,18 @@ class HistoryPage(QWidget):
         # QFluent要求必须给子界面设置全局唯一的对象名
         self.setObjectName(text.replace(' ', '-'))
 
+        # 初始化数据库
+        with Database() as db:
+            db.init_table()
+
         self.h_box_layout = QHBoxLayout(self)
-        self.v_box_layout_1 = QVBoxLayout(self)
-        self.v_box_layout_2 = QVBoxLayout(self)
 
-        self.table_widget = CustomTableWidget(5, ["时间", "文件", "缺陷类型", "置信度", "Xmin", "Xmax", "Ymin", "Ymax"])
-        self.v_box_layout_1.addWidget(self.table_widget)
+        self.history_table_widget = HistoryTableWidget()
+        self.defect_statistics_widget = DefectStatisticsWidget()
+
+        self.history_table_widget.emit_seletected_timestamp.connect(self.defect_statistics_widget.add_results)
 
 
-        self.h_box_layout.addLayout(self.v_box_layout_1)
-        self.h_box_layout.addLayout(self.v_box_layout_2)
+        self.h_box_layout.addWidget(self.history_table_widget)
+        self.h_box_layout.addWidget(self.defect_statistics_widget)
+

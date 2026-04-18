@@ -2,8 +2,9 @@ from ultralytics import YOLO
 from PyQt5.QtCore import QRunnable, QThreadPool
 from PyQt5.QtWidgets import QFileDialog
 from qfluentwidgets import EditableComboBox, setFont
+from pathlib import Path
 
-from shared_data import data
+from shared_data import shared_data
 
 class ModelChooseBox(EditableComboBox):
     def __init__(self, choices, model_path_list, parent=None):
@@ -43,4 +44,5 @@ class LoadModelTask(QRunnable):
         self.model_path = model_path
 
     def run(self):
-        data.model = YOLO(self.model_path)
+        shared_data.model = YOLO(self.model_path)
+        shared_data.model_name = Path(self.model_path).name
