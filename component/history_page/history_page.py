@@ -21,7 +21,6 @@ class HistoryPage(QWidget):
 
         self.history_table_widget.history_table.emit_seletected_timestamp.connect(self.defect_statistics_widget.add_results)
 
-
-        self.h_box_layout.addWidget(self.history_table_widget)
-        self.h_box_layout.addWidget(self.defect_statistics_widget,3)
+        self.h_box_layout.addWidget(self.history_table_widget, 1)
+        self.h_box_layout.addWidget(self.defect_statistics_widget, 2)
 

@@ -88,6 +88,49 @@ class Database:
             )
         return self.cursor.fetchall()
 
+    # 统计每类缺陷的数量
+    def defects_statistics_query(self, timestamps = None):
+        if timestamps:
+            self.cursor.execute(
+                f"""
+                SELECT defect_type, COUNT(*) AS count
+                FROM defects
+                WHERE timestamp IN ({','.join(['?']*len(timestamps))})
+                GROUP BY defect_type
+                """,
+                timestamps
+            )
+        else:
+            self.cursor.execute(
+                f"""
+                SELECT defect_type, COUNT(*) AS count
+                FROM defects
+                GROUP BY defect_type
+                """
+            )
+        return self.cursor.fetchall()
+
+    # 统计每张图片的缺陷数量
+    def defects_count_query(self, timestamps = None):
+        if timestamps:
+            self.cursor.execute(
+                f"""
+                SELECT defect_type, COUNT(*) AS count
+                FROM defects
+                WHERE timestamp IN ({','.join(['?']*len(timestamps))})
+                GROUP BY defect_type
+                """
+            )
+        else:
+            self.cursor.execute(
+                f"""
+                SELECT defect_type, COUNT(*) AS count
+                FROM defects
+                GROUP BY defect_type
+                """
+            )
+        return self.cursor.fetchall()
+
     def imgs_query(self, timestamps = None):
         if timestamps:
             self.cursor.execute(
@@ -131,5 +174,5 @@ if __name__ == "__main__":
         # db.init_table()
         # db.imgs_insert(data)
         # db.defects_insert([(1776494273725, "hole", 0.9, 0, 100, 0, 100), (1776494273725, "spur", 0.8, 0, 100, 0, 100),(1776494273726, "hole", 0.9, 0, 100, 0, 100), (1776494273726, "spur", 0.8, 0, 100, 0, 100)])
-        t = db.defects_query()
+        t = db.defects_statistics_query([1776529371373, 1776497832049])
         print(t)

@@ -3,7 +3,7 @@ from pyecharts.charts import Pie, Bar, Tab
 from pyecharts.commons.utils import JsCode
 
 from pyecharts.globals import CurrentConfig
-CurrentConfig.ONLINE_HOST = "../resource/pyechart/"
+CurrentConfig.ONLINE_HOST = "../resource/pyechart/" # 导向本地js资源
 
 def generate_analysis(sample_data, html_name="样本分析报告.html"):
     """
@@ -112,10 +112,3 @@ def generate_analysis(sample_data, html_name="样本分析报告.html"):
     tab.add(create_pie(), "饼状图分析")
     tab.add(create_bar(), "柱状图分析")
     tab.render(html_name)
-    print(f"成功生成分析文件: {html_name}")
-
-# ================= 使用示例 =================
-if __name__ == "__main__":
-    test_data = [("红细胞", 120), ("白细胞", 45), ("血小板", 88), ("淋巴细胞", 32)]
-
-    generate_analysis(test_data, "myr.html")
