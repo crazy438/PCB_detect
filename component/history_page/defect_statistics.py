@@ -13,7 +13,7 @@ class DefectStatisticsWidget(HeaderCardWidget):
 
         self.v_box_layout = QVBoxLayout(self)
 
-        self.defect_table = ResultTableWidget(5, ["缺陷类型", "置信度", "Xmin", "Xmax", "Ymin", "Ymax"])
+        self.defect_table = ResultTableWidget(["缺陷类型", "置信度", "Xmin", "Xmax", "Ymin", "Ymax"])
         self.v_box_layout.addWidget(self.defect_table)
 
         # 要把组件和布局添加到HeaderCardWidget的viewLayout才会显示
@@ -31,6 +31,7 @@ class DefectStatisticsWidget(HeaderCardWidget):
             with Database() as db:
                 results = db.defects_query((eval(timestamp),))
             if results:
+                self.defect_table.setRowCount(len(results))
                 for i, (defect_type, conf, Xmin, Xmax, Ymin, Ymax) in enumerate(results):
                     self.defect_table.add_item(i, 0, defect_type)
                     self.defect_table.add_item(i, 1, conf)

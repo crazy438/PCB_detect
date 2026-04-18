@@ -4,7 +4,7 @@ from qfluentwidgets import TableWidget, setCustomStyleSheet
 from PyQt5.QtWidgets import QHeaderView, QTableWidgetItem, QAbstractItemView
 
 class ResultTableWidget(TableWidget):
-    def __init__(self, row_count, header_labels, parent=None):
+    def __init__(self, header_labels, parent=None):
         super().__init__(parent)
         self.setBorderVisible(True)
         self.setBorderRadius(8)
@@ -13,7 +13,6 @@ class ResultTableWidget(TableWidget):
         self.setSelectionMode(QAbstractItemView.SingleSelection) # 一次只能选中一行，不允许选中多行
         self.setEditTriggers(QAbstractItemView.NoEditTriggers) # 禁止编辑
         self.verticalHeader().hide()
-        self.setRowCount(row_count)
         self.setColumnCount(len(header_labels))
         self.setHorizontalHeaderLabels(header_labels)
         self.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)

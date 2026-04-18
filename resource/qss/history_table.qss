@@ -4,7 +4,7 @@
     color: #0EA5E9;
 }
 
-#delete_button {
-    font-size: 20px;
-    font-family: 'Microsoft YaHei';
+PushButton {
+    font: 20px;
+    font-family: "Microsoft YaHei";
 }

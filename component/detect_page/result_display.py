@@ -31,7 +31,7 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.init_buttons()
 
         # 检测结果的表格
-        self.result_table = ResultTableWidget(5, ["缺陷类型", "置信度", "Xmin", "Xmax", "Ymin", "Ymax"])
+        self.result_table = ResultTableWidget(["缺陷类型", "置信度", "Xmin", "Xmax", "Ymin", "Ymax"])
         self.result_display_layout.addWidget(self.result_table, 2)
 
         # 获取全局线程池
@@ -114,6 +114,7 @@ class ResultDisplayWidget(HeaderCardWidget):
                 current_img_timstamp = shared_data.process_imgs_timestamp[current_row]
                 results = db.defects_query((current_img_timstamp,))
             if results:
+                self.result_table.setRowCount(len(results))
                 for i, (defect_type, conf, Xmin, Xmax, Ymin, Ymax) in enumerate(results):
                     self.result_table.add_item(i, 0, defect_type)
                     self.result_table.add_item(i, 1, conf)

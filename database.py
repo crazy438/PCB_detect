@@ -122,14 +122,8 @@ class Database:
             timestamps
         )
 
-    # @check_validation
-    # def delete_rows(self, table_name, rows_id):
-    #      id_to_del = [(i,) for i in rows_id]
-    #      self.cursor.executemany(f"DELETE FROM {table_name} WHERE id = ?", id_to_del)
-    #
-    # @check_validation
-    # def clear(self, table_name):
-    #     self.cursor.execute(f"DELETE FROM {table_name}")
+    def clear(self):
+        self.cursor.execute(f"DELETE FROM imgs")
 
 if __name__ == "__main__":
     data = [(1776494273725, 'C:\\Users\\27843\\Desktop\\detection_platform\\output\\2026年04月18日00-36-18-181964\\01_missing_hole_04.jpg', "YOLO26"), (1776494273726, 'C:\\Users\\27843\\Desktop\\detection_platform\\output\\2026年04月18日00-36-18-181964\\01_spur_10.jpg', "YOLO26")]

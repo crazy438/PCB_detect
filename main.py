@@ -4,104 +4,20 @@ import asyncio
 import threading
 import qasync
 import sys
-from PyQt5.QtCore import Qt, pyqtSignal, QEasingCurve, QUrl
+from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QIcon, QDesktopServices
-from PyQt5.QtWidgets import QLabel, QHBoxLayout, QVBoxLayout, QApplication, QFrame, QWidget
+from PyQt5.QtWidgets import QHBoxLayout, QApplication
 
-from qfluentwidgets import NavigationBar, NavigationItemPosition, MessageBox, PopUpAniStackedWidget
+from qfluentwidgets import NavigationBar, NavigationItemPosition, MessageBox
 from qfluentwidgets import FluentIcon as FIF
-from qframelesswindow import FramelessWindow, TitleBar
+from qframelesswindow import FramelessWindow
 
 from component.detect_page.detect_page import DetectPage
 from component.history_page.history_page import HistoryPage
-from database import Database
+from custom_widget.main_window_widget import CustomTitleBar, StackedWidget
 from utils import start_ollama_server
 
-
-class Widget(QWidget):
-    def __init__(self, text: str, parent=None):
-        super().__init__(parent=parent)
-        self.label = QLabel(text, self)
-        self.label.setAlignment(Qt.AlignCenter)
-        self.hBoxLayout = QHBoxLayout(self)
-        self.hBoxLayout.addWidget(self.label, 1, Qt.AlignCenter)
-        self.setObjectName(text.replace(' ', '-'))
-
-
-class StackedWidget(QFrame):
-    currentChanged = pyqtSignal(int)
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self.hBoxLayout = QHBoxLayout(self)
-        self.view = PopUpAniStackedWidget(self)
-
-        self.hBoxLayout.setContentsMargins(0, 0, 0, 0)
-        self.hBoxLayout.addWidget(self.view)
-
-        self.view.currentChanged.connect(self.currentChanged)
-
-    def addWidget(self, widget):
-        self.view.addWidget(widget)
-
-    def widget(self, index: int):
-        return self.view.widget(index)
-
-    def setCurrentWidget(self, widget, popOut=False):
-        if not popOut:
-            self.view.setCurrentWidget(widget, duration=300)
-        else:
-            self.view.setCurrentWidget(widget, True, False, 200, QEasingCurve.InQuad)
-
-    def setCurrentIndex(self, index, popOut=False):
-        self.setCurrentWidget(self.view.widget(index), popOut)
-
-
-class CustomTitleBar(TitleBar):
-    """ Title bar with icon and title """
-
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.setFixedHeight(48)
-        self.hBoxLayout.removeWidget(self.minBtn)
-        self.hBoxLayout.removeWidget(self.maxBtn)
-        self.hBoxLayout.removeWidget(self.closeBtn)
-
-        # add window icon
-        self.iconLabel = QLabel(self)
-        self.iconLabel.setFixedSize(18, 18)
-        self.hBoxLayout.insertSpacing(0, 20)
-        self.hBoxLayout.insertWidget(1, self.iconLabel, 0, Qt.AlignLeft | Qt.AlignVCenter)
-        self.window().windowIconChanged.connect(self.setIcon)
-
-        # add title label
-        self.titleLabel = QLabel(self)
-        self.hBoxLayout.insertWidget(2, self.titleLabel, 0, Qt.AlignLeft | Qt.AlignVCenter)
-        self.titleLabel.setObjectName('titleLabel')
-        self.window().windowTitleChanged.connect(self.setTitle)
-
-        self.vBoxLayout = QVBoxLayout()
-        self.buttonLayout = QHBoxLayout()
-        self.buttonLayout.setSpacing(0)
-        self.buttonLayout.setContentsMargins(0, 0, 0, 0)
-        self.buttonLayout.setAlignment(Qt.AlignTop)
-        self.buttonLayout.addWidget(self.minBtn)
-        self.buttonLayout.addWidget(self.maxBtn)
-        self.buttonLayout.addWidget(self.closeBtn)
-        self.vBoxLayout.addLayout(self.buttonLayout)
-        self.vBoxLayout.addStretch(1)
-        self.hBoxLayout.addLayout(self.vBoxLayout, 0)
-
-    def setTitle(self, title):
-        self.titleLabel.setText(title)
-        self.titleLabel.adjustSize()
-
-    def setIcon(self, icon):
-        self.iconLabel.setPixmap(QIcon(icon).pixmap(18, 18))
-
 class Window(FramelessWindow):
-
-    window_resize_signal = pyqtSignal(int, int)
 
     def __init__(self):
         super().__init__()
@@ -114,6 +30,9 @@ class Window(FramelessWindow):
         # create sub interface
         self.detect_page = DetectPage("PCB检测页面", self)
         self.history_page = HistoryPage("历史记录", self)
+        self.detect_page.result_display_widget.predict_finished_signal.connect(
+            self.history_page.history_table_widget.history_table.flush_history_table
+        )
 
         # initialize layout
         self.initLayout()
@@ -189,10 +108,6 @@ class Window(FramelessWindow):
 
         if w.exec():
             QDesktopServices.openUrl(QUrl("https://github.com/crazy438/PCB_detect"))
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.window_resize_signal.emit(self.width(), self.height())
 
 if __name__ == '__main__':
     # 程序启动时: 自动检查并开启ollama server用于调用本地大模型api

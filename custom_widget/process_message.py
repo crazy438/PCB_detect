@@ -9,10 +9,6 @@ class ProcessMessage(StateToolTip):
         self.contentLabel.setWordWrap(True)
         self.setFixedSize(max(self.titleLabel.width(), self.contentLabel.width()) + 56,
                             self.titleLabel.height() + self.contentLabel.height() + 15)
-        self.update_position() # 更新位置
-        self.window().window_resize_signal.connect(self.update_position)
-
-    def update_position(self):
         self.move(self.parent().width() - self.width() - 10, 0)
 
     def finished(self, title, content):

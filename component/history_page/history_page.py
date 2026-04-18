@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QHBoxLayout
 
 from component.history_page.defect_statistics import DefectStatisticsWidget
 from component.history_page.history_table import HistoryTableWidget
@@ -19,7 +19,7 @@ class HistoryPage(QWidget):
         self.history_table_widget = HistoryTableWidget()
         self.defect_statistics_widget = DefectStatisticsWidget()
 
-        self.history_table_widget.emit_seletected_timestamp.connect(self.defect_statistics_widget.add_results)
+        self.history_table_widget.history_table.emit_seletected_timestamp.connect(self.defect_statistics_widget.add_results)
 
 
         self.h_box_layout.addWidget(self.history_table_widget)
