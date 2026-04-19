@@ -20,8 +20,8 @@ class ModelSettingWidget(HeaderCardWidget):
         self.setting_layout = QFormLayout(self)
 
         self.model_choose_widget = ModelChooseBox(
-            ("PCB缺陷检测-YOLO26", "其他"),
-            ("resource/models/best.pt", None)
+            ("PCB缺陷检测-YOLO26s", "其他"),
+            ("resource/models/PCB缺陷检测-YOLO26s.pt", None)
         )
         self.model_choose_text = QLabel("模型选择")
         self.setting_layout.addRow(self.model_choose_text, self.model_choose_widget)

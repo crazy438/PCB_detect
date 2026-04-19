@@ -2,7 +2,7 @@ from babel.localedata import exists
 from ultralytics import YOLO
 import cv2
 if __name__ == '__main__':
-    model = YOLO('../resource/models/best.pt')
+    model = YOLO('../resource/models/PCB缺陷检测-YOLO26s.pt')
     # results = model.predict(
     #     source=0,
     #     save=False,

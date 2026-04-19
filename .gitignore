@@ -1,5 +1,5 @@
 /原始PCB数据集VCO.zip
 /PCB_DATASET_YOLO.7z
-/resource/models/best.pt
+/resource/models/PCB缺陷检测-YOLO26s.pt
 /runs/
 /.idea/
