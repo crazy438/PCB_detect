@@ -15,12 +15,12 @@ class ImgDisplayView(HorizontalFlipView):
     def add_image(self, current_row, img_path):
         self.clear()
         self.addImage(img_path)
+        self.setCurrentIndex(0) # 恢复索引位置, 防止出错
 
         if shared_data.save_dir:
             predict_img_path = shared_data.save_dir / pathlib.Path(img_path).name
             if predict_img_path.exists():
                 self.addImage(str(predict_img_path))
-
                 # 延迟10ms切换索引, 给控件渲染时间
                 QTimer.singleShot(10, lambda: self.setCurrentIndex(1))
 

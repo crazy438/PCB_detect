@@ -10,7 +10,7 @@ from shared_data import shared_data
 from utils.utils import is_img, is_video
 
 
-class ModelSettingWidget(HeaderCardWidget):
+class PredictSettingWidget(HeaderCardWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setTitle("推理设置")
@@ -86,6 +86,7 @@ class ModelSettingWidget(HeaderCardWidget):
     def get_file(self, qfont):
         file_path_list, _= QFileDialog.getOpenFileNames(self, "打开文件", filter="图片视频文件(*.jpg *.png *.bmp *.mp4 *.avi *.mkv)")
         if file_path_list:
+            shared_data.process_imgs_timestamp = None
             self.file_view.clear_data()
 
             self.file_view.data_model.beginResetModel()
@@ -94,7 +95,10 @@ class ModelSettingWidget(HeaderCardWidget):
                 item.setFont(qfont)
                 self.file_view.data_model.appendRow(item)
             self.file_view.data_model.endResetModel()
-            self.file_view.setCurrentIndex(self.file_view.data_model.index(0,0))
+            if self.file_view.currentIndex().row():
+                self.file_view.setCurrentIndex(self.file_view.data_model.index(0, 0))
+            else:
+                self.file_view.flush_current_row()
 
             # 从文件路径列表file_path_list过滤出图片文件和视频文件
             img_path_list = []

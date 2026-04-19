@@ -1,4 +1,20 @@
+import gc
+
+import torch
 from PyQt5.QtCore import QObject
+
+# YOLO自带的内存泄露问题，手动处理
+def yolo_gc():
+    torch.cuda.empty_cache() # 清理GPU缓存
+    gc.collect()  # 触发Python GC
+    gc.garbage.clear() # 触发循环垃圾回收
+
+
+def update_model_predicator():
+    shared_data.model.overrides['conf'] = shared_data.conf
+    shared_data.model.overrides['iou'] = shared_data.IoU
+    shared_data.model.overrides['imgsz'] = shared_data.imgsz
+    shared_data.model.overrides['save_dir'] = shared_data.save_dir
 
 class SharedData(QObject):
     # 内部数据存储（私有）
@@ -16,10 +32,9 @@ class SharedData(QObject):
         self.is_changed = False
         self.verbose = False # YOLO model.predict的调试信息是否输出
         self.process_imgs_timestamp = None
-        self.defects_data = None
         self.database_path = "resource/history.db"
         self._attrs = (
-            "model_path", "save_path", "conf", "IoU", "imgsz",
+            "model_name", "save_path", "conf", "IoU", "imgsz",
             "verbose", "img_path_list", "video_path_list",
         )
 

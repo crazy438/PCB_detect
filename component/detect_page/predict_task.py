@@ -1,19 +1,10 @@
 import cv2
 from PyQt5.QtCore import pyqtSignal, QObject, QRunnable
-import torch
-import gc
 from datetime import datetime
 from pathlib import Path
 
-from shared_data import shared_data
+from shared_data import shared_data, update_model_predicator, yolo_gc
 from database import Database
-
-
-# YOLO自带的内存泄露问题，手动处理
-def yolo_gc():
-    torch.cuda.empty_cache() # 清理GPU缓存
-    gc.collect()  # 触发Python GC
-    gc.garbage.clear() # 触发循环垃圾回收
 
 class PredictSignals(QObject):
     finished_signal = pyqtSignal()
@@ -35,7 +26,8 @@ class ImgPredictTask(QRunnable):
             # 采用视频流形式处理,返回帧生成器
             # YOLO内部神秘bug PR #23191: https://github.com/ultralytics/ultralytics/pull/23191
             # 清空yolo model的predictor,防止记忆上一次的设置
-            shared_data.model.predictor = None
+            # shared_data.model.predictor = None
+            update_model_predicator()
             img_results = shared_data.model.predict(
                 source=shared_data.img_path_list,
                 save=False,
@@ -73,7 +65,7 @@ class ImgPredictTask(QRunnable):
             del img_results, imgs_data, defects_data
 
             # 清空yolo model的predictor,防止记忆上一次的设置
-            shared_data.model.predictor = None
+            update_model_predicator()
             for video in shared_data.video_path_list:
                 shared_data.model.predict(
                     source=video,
@@ -113,7 +105,7 @@ class CameraPredictTask(QRunnable):
                 print("Warning: 无法获取帧")
                 break
             # 清空yolo model的predictor,防止记忆上一次的设置
-            shared_data.model.predictor = None
+            update_model_predicator()
 
             results = shared_data.model.predict(
                 source=frame,

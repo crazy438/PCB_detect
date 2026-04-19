@@ -106,8 +106,8 @@ class ResultDisplayWidget(HeaderCardWidget):
         self.predict_finished_signal.emit()
 
     def add_results(self, current_row, img_path):
+        self.result_table.clearContents()
         if shared_data.process_imgs_timestamp:
-            self.result_table.clearContents()
 
             #  根据图片的处理时间查询对应的缺陷数据
             with Database() as db:
