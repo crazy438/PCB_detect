@@ -86,6 +86,7 @@ class PredictSettingWidget(HeaderCardWidget):
     def get_file(self, qfont):
         file_path_list, _= QFileDialog.getOpenFileNames(self, "打开文件", filter="图片视频文件(*.jpg *.png *.bmp *.mp4 *.avi *.mkv)")
         if file_path_list:
+            shared_data.is_new_file = True
             shared_data.process_imgs_timestamp = None
             self.file_view.clear_data()
 
@@ -108,5 +109,6 @@ class PredictSettingWidget(HeaderCardWidget):
                     img_path_list.append(file_path)
                 elif is_video(file_path):
                     video_path_list.append(file_path)
+
             shared_data.img_path_list = tuple(img_path_list)
             shared_data.video_path_list = tuple(video_path_list)

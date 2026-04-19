@@ -15,7 +15,9 @@ class ImgDisplayView(HorizontalFlipView):
     def add_image(self, current_row, img_path):
         self.clear()
         self.addImage(img_path)
-        self.setCurrentIndex(0) # 恢复索引位置, 防止出错
+        if shared_data.is_new_file:
+            self.setCurrentIndex(0) # 恢复索引,防止后面setCurrentIndex(1)无效
+            shared_data.is_new_file = False
 
         if shared_data.save_dir:
             predict_img_path = shared_data.save_dir / pathlib.Path(img_path).name

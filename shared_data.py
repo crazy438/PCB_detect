@@ -30,6 +30,7 @@ class SharedData(QObject):
         self.img_path_list = None
         self.video_path_list = None
         self.is_changed = False
+        self.is_new_file = False
         self.verbose = False # YOLO model.predict的调试信息是否输出
         self.process_imgs_timestamp = None
         self.database_path = "resource/history.db"

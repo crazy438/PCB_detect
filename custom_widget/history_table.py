@@ -38,7 +38,7 @@ class HistoryTable(ResultTableWidget):
     def get_selected_timestamps(self):
         selected_rows = self.selectionModel().selectedRows()
         if selected_rows:
-            timestamps= [eval(self.item(row.row(), 0).text()) for row in selected_rows]
+            timestamps= [eval(self.item(row.row(), 0).text()) for row in selected_rows if row]
             self.emit_seletected_timestamp.emit(timestamps)
 
 
