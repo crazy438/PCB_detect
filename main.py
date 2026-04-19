@@ -4,10 +4,10 @@ import asyncio
 import threading
 import qasync
 import sys
+import matplotlib.pyplot as plt
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QIcon, QDesktopServices
 from PyQt5.QtWidgets import QHBoxLayout, QApplication
-
 from qfluentwidgets import NavigationBar, NavigationItemPosition, MessageBox
 from qfluentwidgets import FluentIcon as FIF
 from qframelesswindow import FramelessWindow
@@ -112,6 +112,11 @@ class Window(FramelessWindow):
 if __name__ == '__main__':
     # 程序启动时: 自动检查并开启ollama server用于调用本地大模型api
     threading.Thread(target=start_ollama_server, daemon=True).start()
+
+    # YOLO调用的plot中文绘图
+    plt.ioff()  # 禁用交互模式
+    plt.rcParams['font.sans-serif'] = ['SimHei']  # 使用支持中文的字体
+    plt.rcParams['axes.unicode_minus'] = False  # 防止使用中文字体导致负号乱码
 
     QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)

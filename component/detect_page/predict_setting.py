@@ -20,8 +20,8 @@ class ModelSettingWidget(HeaderCardWidget):
         self.setting_layout = QFormLayout(self)
 
         self.model_choose_widget = ModelChooseBox(
-            ("PCB缺陷检测-YOLO26s", "其他"),
-            ("resource/models/PCB缺陷检测-YOLO26s.pt", None)
+            ("PCB缺陷检测-YOLO26s", "钢材表面缺陷检测-YOLO26s", "其他"),
+            ("resource/models/PCB缺陷检测-YOLO26s.pt", "resource/models/钢材表面缺陷检测-YOLO26s.pt",  None)
         )
         self.model_choose_text = QLabel("模型选择")
         self.setting_layout.addRow(self.model_choose_text, self.model_choose_widget)
@@ -32,7 +32,7 @@ class ModelSettingWidget(HeaderCardWidget):
 
         self.conf_text = QLabel("置信度阈值")
         self.conf_LineEdit = LineEdit()
-        self.conf_LineEdit.setText("0.25")
+        self.conf_LineEdit.setText("0.35")
         # ^0表示以0开头，\.为字符小数点，\d为0~9的数字，{0，4}表示重复\d 0~4次，|表示或
         self.conf_LineEdit.setValidator(QRegExpValidator(QRegExp(r"^0(\.\d{0,4})?$|^1(\.0{0,4})?$")))        # 正则表达式作输入验证
         self.conf_LineEdit.editingFinished.connect(self.update_conf)
